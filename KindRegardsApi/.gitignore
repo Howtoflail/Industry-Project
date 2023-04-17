@@ -1,0 +1,7 @@
+# Files
+.vs
+
+# Folders
+.vscode/
+obj/
+dist/

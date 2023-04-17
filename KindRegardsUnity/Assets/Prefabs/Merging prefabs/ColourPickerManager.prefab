@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5041045000347649340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5041045000347649282}
+  - component: {fileID: 5041045000347649283}
+  m_Layer: 0
+  m_Name: ColourPickerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5041045000347649282
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5041045000347649340}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 414.35626, y: 804.2342, z: -0.41105765}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5041045000347649283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5041045000347649340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b2283a5847cd046b0400438f2d3332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _texture: {fileID: 0}
+  owlBody: {fileID: 0}
+  owlFace: {fileID: 0}
+  owlWingRight: {fileID: 0}
+  owlWingLeft: {fileID: 0}
+  owlTail: {fileID: 0}
+  catBody: {fileID: 0}
+  catFace: {fileID: 0}
+  catEarLeft: {fileID: 0}
+  catEarRight: {fileID: 0}
+  catTail: {fileID: 0}
+  dogBody: {fileID: 0}
+  dogFace: {fileID: 0}
+  dogEarLeft: {fileID: 0}
+  dogEarRight: {fileID: 0}
+  dogTail: {fileID: 0}
+  rabbitBody: {fileID: 0}
+  rabbitFace: {fileID: 0}
+  rabbitEarLeft: {fileID: 0}
+  rabbitEarRight: {fileID: 0}
+  owlBody2: {fileID: 0}
+  owlFace2: {fileID: 0}
+  owlWingRight2: {fileID: 0}
+  owlWingLeft2: {fileID: 0}
+  owlTail2: {fileID: 0}
+  catBody2: {fileID: 0}
+  catFace2: {fileID: 0}
+  catEarLeft2: {fileID: 0}
+  catEarRight2: {fileID: 0}
+  catTail2: {fileID: 0}
+  dogBody2: {fileID: 0}
+  dogFace2: {fileID: 0}
+  dogEarLeft2: {fileID: 0}
+  dogEarRight2: {fileID: 0}
+  dogTail2: {fileID: 0}
+  rabbitBody2: {fileID: 0}
+  rabbitFace2: {fileID: 0}
+  rabbitEarLeft2: {fileID: 0}
+  rabbitEarRight2: {fileID: 0}
+  _refSprite: {fileID: 2800000, guid: 7312777e532b92d4f81d19715e845630, type: 3}

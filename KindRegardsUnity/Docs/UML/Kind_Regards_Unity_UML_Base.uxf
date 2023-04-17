@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>11</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>440</x>
+      <y>693</y>
+      <w>297</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>UIController
+--
+- uiStates: List&lt;UIState&gt;
+- states: Object[]
+--
+- Start(): void
+- Navigate(uiState: UIState): void
+- AddUIState(uiState: UIState): void
+- RemoveUIState(): void
++ GetCurrentUIState(): UIState
++ Forward(uiState: int): void
++ Back(): void
+--
+Used in: UI</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>462</x>
+      <y>990</y>
+      <w>231</w>
+      <h>275</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Enumeration&gt;&gt;
+UIState
+--
+Home
+Message
+Settings
+Customization
+MailboxMessages
+MailboxReplies
+MailboxMessage
+MailboxSendReply
+Stickerbook
+DiaryPassword
+DiaryEntries
+DiaryEntry
+Minigames</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>561</x>
+      <y>902</y>
+      <w>33</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>33</x>
+      <y>693</y>
+      <w>231</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>UIAnimationController
+--
+
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>253</x>
+      <y>726</y>
+      <w>209</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;170.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1375</x>
+      <y>836</y>
+      <w>583</w>
+      <h>407</h>
+    </coordinates>
+    <panel_attributes>MessageController
+--
+using deviceUniqueIdentifier
+--
+- messages: List&lt;MessageDTO&gt;
++ whitelist: List&lt;WhitelistItemDTO&gt;
++ messageText: string
+
+- uiController: UIController
+- cameraController: CameraController 
+- animationController: AnimationController 
+--
+- Start(): void
+- SetWhitelist(): void
+- GetWhitelist(): Task&lt;List&lt;WhitelistItemDTO&gt;&gt;
++ SetMessageText(): void
++ FireSendMessage(): void
++ SendMessage(): Task&lt;MessageDTO&gt;
+- GetMessages(): List&lt;MessageDTO&gt;
+- SendGift(messageId: int, stickerId: int, color:string): void
+- ThankSender(messageId: int): void
+- ObjectToByteArray(obj: object): byte[]
+--
+Used in: ControllerHandler</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1936</x>
+      <y>682</y>
+      <w>286</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>WhitelistItemDTO
+--
+&lt;&lt;get, set&gt;&gt; + id: int
+&lt;&lt;get, set&gt;&gt; + text: string
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1408</x>
+      <y>616</y>
+      <w>396</w>
+      <h>187</h>
+    </coordinates>
+    <panel_attributes>MessageDTO
+--
+&lt;&lt;get, set&gt;&gt; + ID: int
+&lt;&lt;get, set&gt;&gt; + deviceID: string
+&lt;&lt;get, set&gt;&gt; + text: string
+&lt;&lt;get, set&gt;&gt; + date: DateTime
+&lt;&lt;get, set&gt;&gt; + gift: GiftDTO
+&lt;&lt;get, set&gt;&gt; + isRead: bool
+&lt;&lt;get, set&gt;&gt; + Thanked: bool
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1705</x>
+      <y>770</y>
+      <w>396</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>340.0;10.0;340.0;50.0;10.0;50.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1793</x>
+      <y>715</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1881</x>
+      <y>418</y>
+      <w>396</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>GiftDTO
+--
+&lt;&lt;get, set&gt;&gt; + sticker StickerDTO
+&lt;&lt;get, set&gt;&gt; + color: Color</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1386</x>
+      <y>385</y>
+      <w>396</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>StickerDTO
+--
+&lt;&lt;get, set&gt;&gt; + stickerID: int
+&lt;&lt;get, set&gt;&gt; + sticker: string
+&lt;&lt;get, set&gt;&gt; + unlocked: bool
+&lt;&lt;get, set&gt;&gt; + stickerAmount: int
+--
+_+ FromJSONObject(jsonObject: string): StickerDTO_
+_+ FromJSONArray(jsonArray: string): List&lt;StickerDTO&gt;_</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2079</x>
+      <y>484</y>
+      <w>33</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1771</x>
+      <y>440</y>
+      <w>132</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>759</x>
+      <y>352</y>
+      <w>550</w>
+      <h>253</h>
+    </coordinates>
+    <panel_attributes>StickerController
+--
+using deviceUniqueIdentifier
+--
+- stickers: List&lt;StickerDTO&gt;
+- unlockedStickers: List&lt;StickerDTO&gt;
+--
+- Start(): void
+- SetStickers(): void
+- SendUnlockStickerRequest(stickerID: long, amount: int): Task&lt;StickerDTO&gt;
+- ObjectToByteArray(obj: object): byte[]
++ GetStickers(getAll: bool): List&lt;StickerDTO&gt;
++ UseSticker(stickerID: int): void
++ ReceiveSticker(stickerID: int): void
+--
+Used in: ControllerHandler</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1298</x>
+      <y>440</y>
+      <w>110</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1166</x>
+      <y>748</y>
+      <w>231</w>
+      <h>308</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0;140.0;260.0;190.0;260.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1584</x>
+      <y>792</y>
+      <w>33</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1397</x>
+      <y>121</y>
+      <w>363</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>DiaryController
+--
+- stickers: List&lt;StickerDTO&gt;
+--
+- Start(): void
+- Update(): void
+- SetStickers(): void
+- GetStickers(): List&lt;StickerDTO&gt;
+- UseSticker(stickerID: int): void
++ UnlockDiary(pinCode: int): void
++ AddEntry(stickerID: int, sliderValue: int): void
++ GetDiaryEntries(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1166</x>
+      <y>198</y>
+      <w>253</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0;210.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2354</x>
+      <y>671</y>
+      <w>363</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>PetController
+--
+- petDTO: PetDTO
+- messageController: MessageController
+--
+- Start(): void
+- SetPet(): void
++ GetPet(): PetDTO
++ PetGrowht(): void
+--
+Used in: ControllerHandler
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2442</x>
+      <y>429</y>
+      <w>231</w>
+      <h>121</h>
+    </coordinates>
+    <panel_attributes>PetDTO
+--
+&lt;&lt;get, set&gt;&gt; + animal: Transform
+&lt;&lt;get, set&gt;&gt; + name: string
+&lt;&lt;get, set&gt;&gt; + color: Color
+&lt;&lt;get, set&gt;&gt; + growthStage: int
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2552</x>
+      <y>539</y>
+      <w>33</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2211</x>
+      <y>737</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1573</x>
+      <y>308</y>
+      <w>33</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1925</x>
+      <y>209</y>
+      <w>286</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>GameDTO
+--
+&lt;&lt;get, set&gt;&gt; + responseType: int
+&lt;&lt;get, set&gt;&gt; + name: string
+&lt;&lt;get, set&gt;&gt; + giftDTO: GiftDTO
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2079</x>
+      <y>121</y>
+      <w>33</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1023</x>
+      <y>44</y>
+      <w>869</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;280.0;10.0;10.0;770.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1870</x>
+      <y>0</y>
+      <w>363</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>GameController
+--
+- games: List&lt;GameDTO&gt;
+--
+- Start(): void
+- SetGane(): void
++ GetGames(): List&lt;GameDTO&gt;
+--
+Used in: ControllerHandler
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2068</x>
+      <y>297</y>
+      <w>33</w>
+      <h>143</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;110.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2365</x>
+      <y>946</y>
+      <w>363</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>PetAnimationController
+--
+
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2552</x>
+      <y>836</y>
+      <w>33</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1947</x>
+      <y>803</y>
+      <w>429</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;130.0;250.0;130.0;250.0;10.0;370.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>814</y>
+      <w>308</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>State
+--
++ uiStates: List&lt;UIState&gt;
+--
++ DetectActive(currentState: UIState): void
+--
+Used in: Buttons</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>297</x>
+      <y>858</y>
+      <w>165</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>66</x>
+      <y>429</y>
+      <w>539</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>_RequestExecutor_
+--
+_+ Execute&lt;TResultDTO&gt;(request: UnityWebRequest ): Task&lt;TResultDTO&gt;_</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>594</x>
+      <y>440</y>
+      <w>187</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>231</x>
+      <y>253</y>
+      <w>220</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>_APIUrl_
+--
+_- baseUrl: string_
+--
+_+ CreateV1(): string_</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>330</x>
+      <y>341</y>
+      <w>33</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>814</x>
+      <y>693</y>
+      <w>363</w>
+      <h>143</h>
+    </coordinates>
+    <panel_attributes>CameraController
+--
+- cameraAnimation: CameraAnimationController
+--
+- Start(): void
++ NewPosition(newState: int): void
++ Return(): void
+--
+Used in: ControllerHandler</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>814</x>
+      <y>913</y>
+      <w>297</w>
+      <h>143</h>
+    </coordinates>
+    <panel_attributes>CameraAnimationController
+--
+- cameraDTO: CameraDTO
+--
+- Start(): void
++ ChangePosition(newState: int): IEnumerator
++ GetState(): CameraDTO
+--
+Used in: CM vcam</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>726</x>
+      <y>748</y>
+      <w>110</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>957</x>
+      <y>825</y>
+      <w>33</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>814</x>
+      <y>1122</y>
+      <w>297</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>CameraDTO
+--
+&lt;&lt;get, set&gt;&gt; + state: int
+&lt;&lt;get, set&gt;&gt; + virtualCamera: CinemachineVirtualCamera
+&lt;&lt;get, set&gt;&gt; + cameraMove: Animator</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>957</x>
+      <y>1045</y>
+      <w>33</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1694</x>
+      <y>1265</y>
+      <w>319</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>AnimationController
+--
++ paperPlaneObj: GameObject 
+--
+- Start():void
++ PlayFlyingAnimation(): void
+--
+Used for: paperPlaneObj</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1298</x>
+      <y>1265</y>
+      <w>341</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>CameraClickController
+--
+- uiController: UIController 
+- messageController: MessageController
++ rayLength: float
++ layermask: LayerMask 
+--
+- Start():void
+- Update():void
+--
+On: MainCamera</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1463</x>
+      <y>1232</y>
+      <w>33</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1837</x>
+      <y>1232</y>
+      <w>33</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+</diagram>

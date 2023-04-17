@@ -1,0 +1,23 @@
+version: "3.4"
+services:
+  db-service:
+    image: mariadb
+    container_name: db-service
+    restart: unless-stopped
+    tty: true
+    environment:
+      MARIADB_DATABASE: "kindregards"
+      MARIADB_USER: "root"
+      MARIADB_PASSWORD: ""
+      MARIADB_ROOT_PASSWORD: ""
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
+  api-service:
+      depends_on:
+        - 'db-service'
+      build:
+        context: './'
+        dockerfile: 'Dockerfile'
+      ports:
+          - '8080:8080'
+      links:
+          - db-service:db
