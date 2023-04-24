@@ -1,139 +1,92 @@
-# kind-regards-api
-Backend API for the prototype of "Kind Regards"
-
-## Table of contents
-
-<!-- TOC -->
-
-- [kind-regards-api](#kind-regards-api)
-    - [Table of contents](#table-of-contents)
-    - [Documentation](#documentation)
-    - [Before you start](#before-you-start)
-        - [Application structure](#application-structure)
-        - [Main layers](#main-layers)
-        - [Abstraction layers](#abstraction-layers)
-        - [IoC layers](#ioc-layers)
-        - [Controller discovery](#controller-discovery)
-        - [Choices](#choices)
-        - [Class diagram](#class-diagram)
-    - [Running the project](#running-the-project)
-        - [MySQL database](#mysql-database)
-        - [Entity framework](#entity-framework)
-        - [Visual studio](#visual-studio)
-    - [Future improvements](#future-improvements)
-
-<!-- /TOC -->
-
-## Documentation
-This project includes documentation that explain the structure and architecture of this API. This document shows how it is structured using pictures and how to install the database on your laptop:
-- picturesReadMe
-
-## Before you start
-This section is an introduction to this project and contains valuable information that hopefully speeds up the development process for future groups.
-
-### Application structure
-This project has been built with a layered architecture in mind. The layers are being used to separate the responsibilities of each class in a more structured way.
-
-The default project (and application starting point) is `KindRegardsApi.Host`. This project houses the asp.net application which handles the setup of the asp.net application, it should only be used for that.
-
-**Note:** Make sure you are running the `KindRegardsApi.Host` application, and not a any of the other project applications. Each application other than `KindRegardsApi.Host` is a class library project and will not have a starting point.
+# KindRegards
 
 
-### Main layers
-A main layer is a layer that has a (partial) implementation of a functionality. The main layers for this project are: `Presentation`, `Logic`, `Domain`, `Entity`, and `Data`.
 
-**Presentation**<br/>
-The presentation layer is responsible for taking in all requests and generating a JSON response for it. It uses DTOs to prevent requests from changing more data than it should.
+## Getting started
 
-**Logic**<br/>
-The logic layer is responsible for the business logic. Everything that needs to be calculated or transformed should exist in here.
+To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-**Domain**<br/>
-The domain layer contains all business objects.
+Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
 
-**Entity**<br/>
-The entity layer contains all database entities. Each file name uses the `Entity` prefix in its class and file name to differentiate from business objects.
+## Add your files
 
-**Data**<br/>
-The data layer is responsible for retrieving and storing data inside a database. This application uses a MySQL (MariaDB) database to store all of its information.
+- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
+- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
 
-### Abstraction layers
-An abstraction layer contains the interfaces that a layer may use. The layout of these layers are the same as their main layer counterpart, but instead of implementations they only include abstractions (interfaces).
-
-### IoC layers
-An IoC (Inversion of Control) layer has a direct dependency on a almost all layers within the architecture. These dependencies are used to provide ASP.net the correct information to make the dependency injection process work.
-
-Each IoC layer only contains a `[LAYERNAME]ServiceCollectionExtensions.cs` class. This is being used by ASP.net to configure the dependency injection tree.
-
-### Controller discovery
-The `Host` layer will auto-discover controllers inside the `Presentation` layer. You only have to create a new file, mark it with the `[ApiController]` annotation, give it a route and you're done.
-
-### Choices
-- The usage of a `Host` project brings the advantage that each main layer that is being used (`Presentation`, `Logic`, `Domain`, `Entity`, and `Data`) only has to think about their own implementations. The `Host` will make sure that all IoC layers are being included in the dependency injection process.
-- Each service has an interface to make unit-testing easier, and to respect the asp.net dependency injection pattern.
-- Abstraction layers are used to keep layers from leaking into each other. A main layer should never need to know about the implementations of other main layers, only their abstractions.
-- A relational database system was chosen because our data entities have close ties with each other.
-- The API auto-migrates it's database on every request. This is done to ensure that it can run inside a docker container. At the time of writing this there wasn't any way to migrate the database during the application startup.
-
-### Class diagram
-The diagram below shows the implementation flow of each main layer and their abstraction counterpart.
-you can find the diagram in the document.
-
-## Running the project
-This section will talk about running the entire project locally on your computer. The docker option does not require you to have a MySQL database installed locally, this is done within docker-compose.
-
-Once you have the application running, you can access it through postman (recommended) or your webbrowser on the following URL: [http://127.0.0.1:8080](http://127.0.0.1:8080)
-
-**Note:** Each command that is listed below must be executed from the root folder of the API. The root folder is the same folder that this README file has been placed in.
-
-### MySQL database
-A MySQL database is needed for entity framework to run this application. You can either install MySQL directly on your machine, or use a virtual host manager that comes with a MySQL installation. we advice laragon because we used it and can help if needed. you can contact me on teams Maike Meek.
-
-Availlable virtual host managers:
-- [Laragon](https://laragon.org/)
-- [WampServer](https://www.wampserver.com/en/)
-- [Xampp](https://www.apachefriends.org/index.html)
-
-For laragon:
-1. download laragon.
-2. open laragon
-3. click on start all
-4. click on database
-5. download the krc file
-6. unzip the krc file
-7. create a new database called kindregards
-8. open the database
-9. double click krc.sql or import sql file
-
-### Entity framework
-Make sure that you have the entity framework tools installed globally:
-```bash
-$ dotnet tool install --global dotnet-ef --version 6.0.5
+```
+cd existing_repo
+git remote add origin https://git.fhict.nl/I464799/kindregards.git
+git branch -M main
+git push -uf origin main
 ```
 
-### Visual studio
-If you want to run this project in Visual studio, you need to do the following:
+## Integrate with your tools
 
-**Open the KindRegardsApi project**<br/>
-this can be done when you download the gitlab files
+- [ ] [Set up project integrations](https://git.fhict.nl/I464799/kindregards/-/settings/integrations)
 
-**Select the KindRegardsApi.Host project**<br/>
-This can be done in the solution explorer:
+## Collaborate with your team
 
-**Set it as the startup project**<br/>
-This can be done by right-clicking on the `KindRegardsApi.Host` project and selecting "Set as startup project" in the context menu:
+- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
+- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
+- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
+- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
+- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
+## Test and Deploy
 
+Use the built-in continuous integration in GitLab.
 
-### Dotnet CLI
-To run this project from the dotnet CLI, you can use the following command:
-```bash
-$ dotnet run --project KindRegardsApi.Host
-```
+- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
+- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
+- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
+- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
+- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-## Future improvements
-Since we've had around 5 weeks to create a good base for this project, not everything is as polished as it should be. This section details possible future improvements that can be done by a future team.
+***
 
-1. Integrate image to base64 conversion functionality.
-2. extend the database api code
-3. connect it to docker
+# Editing this README
+
+When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+
+## Suggestions for a good README
+Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+
+## Name
+Choose a self-explaining name for your project.
+
+## Description
+Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+
+## Badges
+On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+
+## Visuals
+Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+
+## Installation
+Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+## Usage
+Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+
+## Support
+Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+
+## Roadmap
+If you have ideas for releases in the future, it is a good idea to list them in the README.
+
+## Contributing
+State if you are open to contributions and what your requirements are for accepting them.
+
+For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+
+You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+
+## Authors and acknowledgment
+Show your appreciation to those who have contributed to the project.
+
+## License
+For open source projects, say how it is licensed.
+
+## Project status
+If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
