@@ -5,6 +5,8 @@ services:
     container_name: db-service
     restart: unless-stopped
     tty: true
+    volumes:
+        - './DockerDB:/docker-entrypoint-initdb.d'
     ports:
         - '3306:3306'
     environment:
