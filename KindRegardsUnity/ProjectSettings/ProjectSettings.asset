@@ -155,7 +155,6 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.DefaultCompany.KindRegards
     Standalone: com.DefaultCompany.KindRegards
   buildNumber:
     Standalone: 0
