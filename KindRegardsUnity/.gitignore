@@ -45,8 +45,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-# Assets/Firebase
-# Assets/Firebase.meta
+Assets/Firebase
+Assets/Firebase.meta
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
