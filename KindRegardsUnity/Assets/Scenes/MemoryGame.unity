@@ -486,6 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1335211800}
   - component: {fileID: 1335211799}
+  - component: {fileID: 1335211801}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -506,7 +507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puzzleField: {fileID: 125990179}
-  button: {fileID: 0}
+  button: {fileID: 4247585218725556813, guid: 51ee6df3530fe5f4ab15809522486164, type: 3}
 --- !u!4 &1335211800
 Transform:
   m_ObjectHideFlags: 0
@@ -522,3 +523,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1335211801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335211798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a36943f21aa904588ab054bf5eb5ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
