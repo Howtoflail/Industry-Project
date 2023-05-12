@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHostLayer(builder.Configuration);
 
 builder.WebHost.UseKestrel();
-builder.WebHost.UseUrls("http://*:8080");
+//builder.WebHost.UseUrls("http://*:8080");
 builder.WebHost.UseIISIntegration();
 
 var app = builder.Build();
