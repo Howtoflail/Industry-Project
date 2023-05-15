@@ -6,20 +6,31 @@ public class MailGameObstacles : MonoBehaviour
 {
     public GameObject topObstacle;
     public GameObject bottomObstacle;
+    public GameObject playerDetector;
     public float obstacleSpawnPositionX;
 
     [SerializeField]
     private float gap;
     [SerializeField]
+    private float maxGapHeight;
+    [SerializeField]
+    private float minGapHeight;
+
+    [SerializeField]
     private float timeBetweenObstacles;
     private float nextSpawnTime;
     private float height;
-
     private bool inGame;
+
+    List<GameObject> obstacles;
+    List<GameObject> playerDetectors;
+
 
     void Start()
     {
         inGame = false;
+        obstacles = new List<GameObject>();
+        playerDetectors = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -31,17 +42,32 @@ public class MailGameObstacles : MonoBehaviour
             {
                 nextSpawnTime += timeBetweenObstacles;
 
-                GameObject top = Instantiate(topObstacle, GameObject.FindGameObjectWithTag("Canvas").transform);
-                GameObject bottom = Instantiate(bottomObstacle, GameObject.FindGameObjectWithTag("Canvas").transform);
+                GameObject top = Instantiate(
+                    topObstacle,
+                    GameObject.FindGameObjectWithTag("Canvas").transform
+                );
+                GameObject bottom = Instantiate(
+                    bottomObstacle,
+                    GameObject.FindGameObjectWithTag("Canvas").transform
+                );
+                GameObject detector= Instantiate(
+                    playerDetector,
+                    GameObject.FindGameObjectWithTag("Canvas").transform
+                );
 
+                obstacles.Add(top);
+                obstacles.Add(bottom);
+                playerDetectors.Add(detector);
                 height = GenerateRandomHeight();
-                top.transform.position = transform.position + new Vector3(obstacleSpawnPositionX, (height+gap), 0);
-                bottom.transform.position = transform.position + new Vector3(obstacleSpawnPositionX, (height-gap), 0);
+                top.transform.position =
+                    transform.position + new Vector3(obstacleSpawnPositionX, (height + gap), 0);
+                bottom.transform.position =
+                    transform.position + new Vector3(obstacleSpawnPositionX, (height - gap), 0);
+                detector.transform.position =
+                    transform.position + new Vector3(obstacleSpawnPositionX, (height), 0); 
 
                 // top.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
                 // bottom.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
-
-
             }
         }
         else { }
@@ -49,7 +75,7 @@ public class MailGameObstacles : MonoBehaviour
 
     private float GenerateRandomHeight()
     {
-        return Random.Range(-400.0f, 400.0f);
+        return Random.Range(minGapHeight, maxGapHeight);
     }
 
     public void StartSpawning()
@@ -57,6 +83,12 @@ public class MailGameObstacles : MonoBehaviour
         inGame = true;
     }
 
-
-    public void StopSpawning() { }
+    public void FreezeAll()
+    {
+        inGame = false;
+        foreach (GameObject obstacleObject in obstacles)
+        {
+            obstacleObject.GetComponent<Obstacle>().Freeze();
+        }
+    }
 }

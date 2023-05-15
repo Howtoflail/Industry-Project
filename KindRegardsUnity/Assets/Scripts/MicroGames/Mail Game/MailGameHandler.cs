@@ -6,8 +6,15 @@ public class MailGameHandler : MonoBehaviour
 {
     // Start is called before the first frame update
     private bool inGame;
+    private int score = 0;
+
+    MailGamePlayer player;
+    MailGameObstacles obstacles;
+
     void Start()
     {
+        obstacles = GameObject.Find("MailGame").GetComponent<MailGameObstacles>();
+        player = GameObject.Find("MailGame").GetComponent<MailGamePlayer>();
         inGame = false;
         return;
     }
@@ -17,14 +24,18 @@ public class MailGameHandler : MonoBehaviour
     {
         if (inGame)
         {
-            return;
+            
         }
-    
     }
 
     public void StartMailGame()
     {
         inGame = true;
         return;
+    }
+    public void AddScore()
+    {
+        score++;
+        Debug.Log("Score: " + score);
     }
 }

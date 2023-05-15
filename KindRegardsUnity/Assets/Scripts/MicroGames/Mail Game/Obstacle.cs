@@ -7,21 +7,30 @@ public class Obstacle : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField]
     private float obstacleSpeed;
+
     [SerializeField]
     private float destroyLocationX;
-    void Start()
-    {
-        
-    }
+
+    public bool frozen = false;
+
+    void Start() { }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position += ((Vector3.left * obstacleSpeed) * Time.deltaTime);
-        Debug.Log(transform.position.x);
-        if (transform.position.x < destroyLocationX)
+        if (!frozen)
         {
-            Destroy(gameObject);
+            transform.position += ((Vector3.left * obstacleSpeed) * Time.deltaTime);
+            // Debug.Log(transform.position.x);
+            if (transform.position.x < destroyLocationX)
+            {
+                Destroy(gameObject);
+            }
         }
+    }
+
+    public void Freeze()
+    {
+        frozen = true;
     }
 }
