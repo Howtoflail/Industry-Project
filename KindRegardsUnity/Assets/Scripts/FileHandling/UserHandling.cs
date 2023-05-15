@@ -73,6 +73,7 @@ public class UserHandling : MonoBehaviour
         userId = GetIdFromFile();
         if(userId == "")
         {
+            //Put the document id from the newly created user here
             SaveIdInBinary("New User");
             userId = GetIdFromFile();
         }
@@ -80,7 +81,6 @@ public class UserHandling : MonoBehaviour
         Debug.Log("User id: " + userId);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
