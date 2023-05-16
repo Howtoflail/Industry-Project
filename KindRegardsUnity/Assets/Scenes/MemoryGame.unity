@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414738, b: 0.121078536, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -182,7 +182,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 200, y: 200}
+  m_CellSize: {x: 250, y: 250}
   m_Spacing: {x: 20, y: 20}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -535,3 +535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a36943f21aa904588ab054bf5eb5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bgImage: {fileID: -1478757748, guid: aaf154504652b2245a970c7abbd2c0cd, type: 3}
+  puzzles: []
+  gamePuzzles: []
+  btns: []

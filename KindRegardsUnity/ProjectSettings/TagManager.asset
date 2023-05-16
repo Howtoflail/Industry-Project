@@ -7,6 +7,7 @@ TagManager:
   - GoToDiary
   - CodeInput
   - Slider
+  - PuzzleButton
   layers:
   - Default
   - TransparentFX
