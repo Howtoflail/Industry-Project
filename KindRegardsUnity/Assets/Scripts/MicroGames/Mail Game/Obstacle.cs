@@ -22,15 +22,16 @@ public class Obstacle : MonoBehaviour
         {
             transform.position += ((Vector3.left * obstacleSpeed) * Time.deltaTime);
             // Debug.Log(transform.position.x);
-            if (transform.position.x < destroyLocationX)
-            {
-                Destroy(gameObject);
-            }
         }
     }
 
     public void Freeze()
     {
         frozen = true;
+    }
+
+    public float GetX()
+    {
+        return transform.position.x;
     }
 }

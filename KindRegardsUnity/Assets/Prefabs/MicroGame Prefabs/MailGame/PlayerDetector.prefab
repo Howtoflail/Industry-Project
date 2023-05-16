@@ -48,7 +48,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -2.5131226, y: 99.1488}
@@ -76,6 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cda51aa53b599364889a3edae068f2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacleSpeed: 75
-  destroyLocationX: -600
+  obstacleSpeed: 30
+  destroyLocationX: -100
   frozen: 0

@@ -6,14 +6,18 @@ public class MailGamePlayer : MonoBehaviour
 {
     // Start is called before the first frame update
     public MailGameObstacles obstacles;
+
     [SerializeField]
     private float gravity;
+
     [SerializeField]
     private float jumpForce;
+    private bool isDead;
 
     private Rigidbody2D rb;
 
     private MailGameHandler handler;
+
     void Start()
     {
         handler = GameObject.Find("MailGame").GetComponent<MailGameHandler>();
@@ -25,7 +29,7 @@ public class MailGamePlayer : MonoBehaviour
     void Update()
     {
         rb.AddForce(new Vector2(0, -gravity));
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             rb.velocity = Vector2.zero;
             rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
@@ -36,15 +40,27 @@ public class MailGamePlayer : MonoBehaviour
     {
         if (other.collider.tag == "Obstacle")
         {
-            Debug.Log("Game Over");
             rb.freezeRotation = true;
             rb.velocity = Vector2.zero;
             obstacles.FreezeAll();
+            handler.GameOver();
         }
-        if (other.collider.tag == "PlayerDetector")
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+      if (other.tag == "PlayerDetector")
         {
             handler.AddScore();
         }
+    }
+    public bool IsDead()
+    {
+        return isDead;
+    }
 
+    public void ResetPosition()
+    {
+        this.GetComponent<RectTransform>().localPosition = Vector3.zero;
     }
 }
