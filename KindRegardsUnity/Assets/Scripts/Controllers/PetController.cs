@@ -159,7 +159,6 @@ public class PetController : MonoBehaviour
             User u = new User(person.Id, person.diary_code, person.computer_code );  
             UnityEngine.Debug.Log(u.id);
             addPet(u);
-          
         }
 
     }
