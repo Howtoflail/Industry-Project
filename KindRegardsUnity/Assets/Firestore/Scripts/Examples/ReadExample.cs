@@ -12,7 +12,8 @@ public class ReadExample : MonoBehaviour
 		var data = GetComponent<DataExample>();
 		//provide with an annotated object and a function that is called on receive
 		mgr.GetObject(data, result => {
-			print($"data name: {(result as DocumentSnapshot).GetValue<string>("name")}");
+			FirestoreDataTransferer.TransferTo(result as DocumentSnapshot, data);
+			print($"data name: {data.name}");
 		});
 	}
 
