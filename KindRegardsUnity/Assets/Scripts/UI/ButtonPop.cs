@@ -6,7 +6,9 @@ using UnityEngine.EventSystems;
 public class ButtonPop : MonoBehaviour
 {
     // Start is called before the first frame update
-
+    AudioSource audioSource;
+    [SerializeField]
+    AudioClip downSound, upSound;
     [SerializeField]
     UiScriptable UiScriptableValues;
 
@@ -21,7 +23,10 @@ public class ButtonPop : MonoBehaviour
     [SerializeField]
     GameObject buttonObject;
 
-    void Start() { }
+    void Start()
+    {
+        audioSource = this.GetComponent<AudioSource>();
+    }
 
     // Update is called once per frame
     void Update() { }
@@ -34,6 +39,8 @@ public class ButtonPop : MonoBehaviour
 
     public void ButtonDown()
     {
+        audioSource.clip = downSound;
+        audioSource.Play();
         float shrink;
         float shift;
 
@@ -53,6 +60,8 @@ public class ButtonPop : MonoBehaviour
 
     public void ButtonUp()
     {
+        audioSource.clip = upSound;
+        audioSource.Play();
         float shrink;
         float shift;
 

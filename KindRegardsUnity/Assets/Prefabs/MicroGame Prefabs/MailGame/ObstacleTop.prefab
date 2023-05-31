@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cda51aa53b599364889a3edae068f2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacleSpeed: 30
+  obstacleSpeed: 10
   destroyLocationX: -100
   frozen: 0
 --- !u!61 &8594301009674874542
