@@ -1,3 +1,5 @@
+using Firebase.Extensions;
+using Firebase.Firestore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,9 @@ public class UserHandling : MonoBehaviour
     private string filePath = @"User.bin";
     private string userId;
 
-    private string GetIdFromFile()
+    private FirestoreManager firestoreManager;
+
+    public string GetIdFromFile(string filePath)
     {
         if (File.Exists(filePath))
         {
@@ -68,17 +72,77 @@ public class UserHandling : MonoBehaviour
         }
     }
 
-    void Start()
+    void CreateUserOrLogin(DataExample data)
     {
-        userId = GetIdFromFile();
-        if(userId == "")
+        /*userId = GetIdFromFile(filePath);
+        //query the id found in file to make sure it exists on db or create new one and store it on db
+        if (userId == "")
         {
-            //Put the document id from the newly created user here
-            SaveIdInBinary("New User");
-            userId = GetIdFromFile();
+            firestoreManager.SetObject(data, result =>
+            {
+                Debug.Log($"Newly generated user id is {result}");
+                SaveIdInBinary(result);
+            });
         }
+        else
+        {
+            //query
+            firestoreManager.Get
+        }*/
 
         Debug.Log("User id: " + userId);
+    }
+
+    void Start()
+    {
+        /*firestoreManager = gameObject.GetComponent<FirestoreManager>();
+        DataExample data = gameObject.GetComponent<DataExample>();
+        data.name = "Martin";
+
+        if (firestoreManager.ready == false)
+        {
+            firestoreManager.onLoaded.AddListener(() => CreateUserOrLogin(data));
+        }
+        else
+        {
+            CreateUserOrLogin(data);
+        }*/
+        //
+        FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
+
+        userId = GetIdFromFile(filePath);
+        //query the id found in file to make sure it exists on db or create new one and store it on db
+        if (userId == "")
+        {
+            var user = new
+            {
+                //user name should be retrieved from player input
+                Name = "Emanuel"
+            };
+
+            firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
+            {
+                Debug.Log($"Newly generated user id is {task.Result.Id}");
+                SaveIdInBinary(task.Result.Id);
+            });
+        }
+        else
+        {
+            firestore.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+            {
+                DocumentSnapshot snapshot = task.Result;
+                if (snapshot.Exists == true)
+                {
+                    Debug.Log($"Document {snapshot.Id} found");
+                }
+                else
+                {
+                    Debug.Log("Document doesnt exist!");
+                }
+            });
+        }
+
+        //Debug.Log("User id: " + userId);
     }
 
     void Update()
