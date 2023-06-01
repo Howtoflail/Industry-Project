@@ -63,6 +63,8 @@ public class MailGameObstacles : MonoBehaviour
                 obstacles.Add(top);
                 obstacles.Add(bottom);
                 playerDetectors.Add(detector);
+
+
                 height = GenerateRandomHeight();
                 top.transform.position =
                     transform.position + new Vector3(obstacleSpawnPositionX, (height + gap), 0);

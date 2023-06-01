@@ -34,4 +34,9 @@ public class Obstacle : MonoBehaviour
     {
         return transform.position.x;
     }
+
+    public void SetSpeed(float newSpeed)
+    {       
+        obstacleSpeed = newSpeed;
+    }
 }
