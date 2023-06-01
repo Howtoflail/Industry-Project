@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,16 +7,16 @@ public class Message
 {
     private string name;
     private string textMessage;
-    private string timestamp;
+    private DateTime timestamp;
 
     public string Name { get { return name; } set { name = value; } }
     public string TextMessage { get { return textMessage; } set { textMessage = value; } }
-    public string Timestamp { get { return timestamp; } set { timestamp = value; } }
+    public DateTime Timestamp { get { return timestamp; } set { timestamp = value; } }
 
-    public Message(string name, string message, string timestamp)
+    public Message(string name, string message, DateTime timestamp)
     {
         this.name = name;
-        this.textMessage = message;
+        textMessage = message;
         this.timestamp = timestamp;
     }
 }

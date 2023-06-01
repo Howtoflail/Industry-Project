@@ -13,6 +13,18 @@ public class UserHandling : MonoBehaviour
     private string userId;
 
     private FirestoreManager firestoreManager;
+    private FirebaseFirestore firestore;
+
+    //When a user is first created, the user will have a field lastTimeLoggedIn
+    //which will be the DateTime of when the user plays the game for the first time
+    //
+    //This lastTimeLoggedIn field will be updated everytime a player logs in to the game
+    //So when querying the id of the user to find whether the user exists or not
+    //the field will be updated with the time he logged in
+    //
+    //A background Android service will run every 48 hours to check if the lastTimeLoggedIn
+    //was less than 48 hours ago
+    //If the lastTimeLoggedIn was 48 hours ago or more the user will be marked as inactive in the database
 
     public string GetIdFromFile(string filePath)
     {
@@ -93,31 +105,50 @@ public class UserHandling : MonoBehaviour
         Debug.Log("User id: " + userId);
     }
 
+    void UpdatePlayersActivity()
+    {
+        Query allUsersQuery = firestore.Collection("users");
+        allUsersQuery.GetSnapshotAsync().ContinueWith(task =>
+        {
+            QuerySnapshot allUsersQuerySnapshot = task.Result;
+            foreach(DocumentSnapshot documentSnapshot in allUsersQuerySnapshot) 
+            {
+                Dictionary<string, object> user = documentSnapshot.ToDictionary();
+                foreach(KeyValuePair<string, object> pair in user)
+                {
+                    Dictionary<string, object> updates = new Dictionary<string, object>
+                        {
+                            {"messagesReceivedPerDay", 0},
+                            {"lastTimeMessageReceived", FieldValue.ServerTimestamp }
+                        };
+
+                    DocumentReference userDocReference = documentSnapshot.Reference;
+                    userDocReference.SetAsync(updates, SetOptions.MergeAll).ContinueWith(task =>
+                    {
+                        Debug.Log("Updates are created!");
+                    });
+                }
+            }
+        });
+    }
+
     void Start()
     {
-        /*firestoreManager = gameObject.GetComponent<FirestoreManager>();
-        DataExample data = gameObject.GetComponent<DataExample>();
-        data.name = "Martin";
-
-        if (firestoreManager.ready == false)
-        {
-            firestoreManager.onLoaded.AddListener(() => CreateUserOrLogin(data));
-        }
-        else
-        {
-            CreateUserOrLogin(data);
-        }*/
-        //
-        FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
+        firestore = FirebaseFirestore.DefaultInstance;
 
         userId = GetIdFromFile(filePath);
-        //query the id found in file to make sure it exists on db or create new one and store it on db
+
+        //Query the id found in file to make sure it exists on db or create new one and store it on db
         if (userId == "")
         {
+            //Redirect to character creation
+
             var user = new
             {
                 //user name should be retrieved from player input
-                Name = "Emanuel"
+                Name = "Emanuel",
+                lastTimeLoggedIn = FieldValue.ServerTimestamp,
+                isActive = true
             };
 
             firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
@@ -137,16 +168,28 @@ public class UserHandling : MonoBehaviour
                 }
                 else
                 {
+                    //Redirect to character creation
                     Debug.Log("Document doesnt exist!");
                 }
             });
         }
-
-        //Debug.Log("User id: " + userId);
     }
 
     void Update()
     {
         
     }
+
+    /*firestoreManager = gameObject.GetComponent<FirestoreManager>();
+        DataExample data = gameObject.GetComponent<DataExample>();
+        data.name = "Martin";
+
+        if (firestoreManager.ready == false)
+        {
+            firestoreManager.onLoaded.AddListener(() => CreateUserOrLogin(data));
+        }
+        else
+        {
+            CreateUserOrLogin(data);
+        }*/
 }

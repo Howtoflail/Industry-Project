@@ -47,7 +47,7 @@ public class UIController : MonoBehaviour
 
     public UIStateEnum GetCurrentUIState()
     {
-        Debug.Log($"GetCurrentUIState function returns: {uiStates[uiStates.Count - 1]}");
+        //Debug.Log($"GetCurrentUIState function returns: {uiStates[uiStates.Count - 1]}");
         return uiStates[uiStates.Count - 1];
     }
 
@@ -60,9 +60,9 @@ public class UIController : MonoBehaviour
 
     public void Back()
     {
-        Debug.Log($"Back function removes: {GetCurrentUIState()}");
+        //Debug.Log($"Back function removes: {GetCurrentUIState()}");
         RemoveUIState();
-        Debug.Log($"And then navigates to: {GetCurrentUIState()}");
+        //Debug.Log($"And then navigates to: {GetCurrentUIState()}");
         Navigate(GetCurrentUIState());
 
     }
