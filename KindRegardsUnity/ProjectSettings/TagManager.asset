@@ -11,6 +11,7 @@ TagManager:
   - Canvas
   - Obstacle
   - PlayerDetector
+  - WinDetector
   layers:
   - Default
   - TransparentFX

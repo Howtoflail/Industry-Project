@@ -31,7 +31,7 @@ public class MailGameHandler : MonoBehaviour
         player.gameObject.SetActive(true);
         obstacles.DestroyAllObstacles();
         player.ResetPosition();
-
+        obstacles.StartSpawning();
         inGame = true;
         return;
     }
