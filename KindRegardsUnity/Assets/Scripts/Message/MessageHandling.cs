@@ -28,7 +28,10 @@ public class MessageHandling : MonoBehaviour
     private GameObject textMessageNamePrefab;
     [SerializeField] 
     private GameObject panelResponse;
+    [SerializeField]
+    private GameObject messageObject;
 
+    private Animator messageAnimator;
     private UserHandling userHandling;
     private FirebaseFirestore firestore;
 
@@ -78,7 +81,7 @@ public class MessageHandling : MonoBehaviour
 
                 foreach(KeyValuePair<string, object> pair in message) 
                 {
-                    Debug.Log($"{pair.Key}: {pair.Value}");
+                    //Debug.Log($"{pair.Key}: {pair.Value}");
 
                     if(pair.Key == "name")
                     {
@@ -98,7 +101,7 @@ public class MessageHandling : MonoBehaviour
                     }
                 }
 
-                Debug.Log("");
+                //Debug.Log("");
 
                 //If the message is sent by the user or it has been replied to, it shouldn't be listed to new messages
                 if (name != "" && textMessage != "" && timestamp != "" && messageFromId != userId)
@@ -194,7 +197,6 @@ public class MessageHandling : MonoBehaviour
                     Dictionary<string, object> user = documentSnapshot.ToDictionary();
                     foreach (KeyValuePair<string, object> pair in user)
                     {
-
                         if (pair.Key == "Name")
                         {
                             name = pair.Value.ToString();
@@ -218,7 +220,7 @@ public class MessageHandling : MonoBehaviour
                         }
                     }
 
-                    if (name != "" && isActive == true && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
+                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
                     {
                         lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
                         lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
@@ -237,9 +239,47 @@ public class MessageHandling : MonoBehaviour
                             userWithMessageInfo.MessagesReceivedPerDay = 0;
                         }
 
-                        activeUsers.Add(userWithMessageInfo);
-                        //Adding id, userName to distinguish users later
-                        allUserIds.Add((documentSnapshot.Id, name));
+                        //Check if players became active or inactive
+                        TimeSpan activeTimeDifference = currentDateTime - userWithMessageInfo.LastTimeLoggedIn;
+                        double hoursDifference = Math.Abs(activeTimeDifference.TotalHours);
+                        Debug.Log($"Activity hour difference between current time and last time logged in is: {hoursDifference}");
+
+                        //Update player activity in db
+                        if(hoursDifference < 48 && userWithMessageInfo.IsActive == false) 
+                        {
+                            userWithMessageInfo.IsActive = true;
+
+                            Dictionary<string, object> update = new Dictionary<string, object>()
+                            {
+                                {"isActive", userWithMessageInfo.IsActive}
+                            };
+
+                            firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
+                            {
+                                Debug.Log($"Updated user is active data for {userWithMessageInfo.Name}!");
+                            });
+                        }
+                        else if(hoursDifference >= 48 && userWithMessageInfo.IsActive == true)
+                        {
+                            userWithMessageInfo.IsActive = false;
+
+                            Dictionary<string, object> update = new Dictionary<string, object>()
+                            {
+                                {"isActive", userWithMessageInfo.IsActive}
+                            };
+
+                            firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
+                            {
+                                Debug.Log($"Updated user is active data for {userWithMessageInfo.Name}!");
+                            });
+                        }
+
+                        if(userWithMessageInfo.IsActive == true) 
+                        {
+                            activeUsers.Add(userWithMessageInfo);
+                            //Adding id, userName to distinguish users later
+                            allUserIds.Add((documentSnapshot.Id, userWithMessageInfo.Name));
+                        }
                     }
                 }
             }
@@ -393,6 +433,10 @@ public class MessageHandling : MonoBehaviour
             {
                 Debug.Log($"Newly generated message id is {task.Result.Id}");
             });
+
+            //Playing animation for sending a message
+            messageObject.SetActive(true);
+            messageAnimator.SetTrigger("MessageCreated");
         }
         else
         {
@@ -486,6 +530,7 @@ public class MessageHandling : MonoBehaviour
         userHandling = gameObject.GetComponent<UserHandling>();
         firestore = FirebaseFirestore.DefaultInstance;
         userId = userHandling.GetIdFromFile(filePath);
+        messageAnimator = messageObject.GetComponent<Animator>();
 
         await WaitAndCreateUIMessages();
         //textMessagesCounter.text = $"You have {messages.Count} new messages";

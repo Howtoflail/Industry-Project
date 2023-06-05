@@ -165,6 +165,63 @@ public class UserHandling : MonoBehaviour
                 if (snapshot.Exists == true)
                 {
                     Debug.Log($"Document {snapshot.Id} found");
+
+                    string name = "";
+                    bool isActive = false;
+                    string lastTimeLoggedIn = "";
+                    string lastTimeMessageReceived = "";
+                    string messagesReceivedPerDay = "";
+
+                    Dictionary<string, object> user = snapshot.ToDictionary();
+                    foreach(KeyValuePair<string, object> pair in user)
+                    {
+                        if (pair.Key == "Name")
+                        {
+                            name = pair.Value.ToString();
+                            Debug.Log($"User name found: {name}");
+                        }
+                        else if (pair.Key == "isActive")
+                        {
+                            isActive = (bool)pair.Value;
+                        }
+                        else if (pair.Key == "lastTimeLoggedIn")
+                        {
+                            lastTimeLoggedIn = pair.Value.ToString();
+                        }
+                        else if (pair.Key == "lastTimeMessageReceived")
+                        {
+                            lastTimeMessageReceived = pair.Value.ToString();
+                        }
+                        else if (pair.Key == "messagesReceivedPerDay")
+                        {
+                            messagesReceivedPerDay = pair.Value.ToString();
+                        }
+                    }
+
+                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
+                    {
+                        lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
+                        lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
+
+                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), int.Parse(messagesReceivedPerDay));
+
+                        //Add 2 hours because DateTime in db is UTC+2
+                        userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
+                        userWithMessageInfo.LastTimeMessageReceived = userWithMessageInfo.LastTimeMessageReceived.AddHours(2);
+
+                        //Update last time logged in for the user that logged in
+                        userWithMessageInfo.LastTimeLoggedInTimeStamp = FieldValue.ServerTimestamp;
+
+                        Dictionary<string, object> update = new Dictionary<string, object>
+                        {
+                            {"lastTimeLoggedIn", userWithMessageInfo.LastTimeLoggedInTimeStamp}
+                        };
+
+                        firestore.Collection("users").Document(userId).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
+                        {
+                            Debug.Log($"Updated user last time logged in data!");
+                        });
+                    }
                 }
                 else
                 {

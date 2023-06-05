@@ -9,6 +9,7 @@ public class UserWithMessageInfo
     private bool isActive;
     private DateTime lastTimeLoggedIn;
     private DateTime lastTimeMessageReceived;
+    private object lastTimeLoggedInTimeStamp; //only to be used when updating a user in database
     private object lastTimeMessageReceivedTimeStamp; //only to be used when updating a user in database
     private int messagesReceivedPerDay;
 
@@ -16,6 +17,7 @@ public class UserWithMessageInfo
     public bool IsActive { get { return isActive; } set { isActive = value; } }
     public DateTime LastTimeLoggedIn { get { return lastTimeLoggedIn; } set { lastTimeLoggedIn = value; } }
     public DateTime LastTimeMessageReceived { get { return lastTimeMessageReceived; } set { lastTimeMessageReceived = value;} }
+    public object LastTimeLoggedInTimeStamp { get { return lastTimeLoggedInTimeStamp; } set { lastTimeLoggedInTimeStamp = value; } }
     public object LastTimeMessageReceivedTimeStamp { get { return lastTimeMessageReceivedTimeStamp; } set { lastTimeMessageReceivedTimeStamp = value;} }
     public int MessagesReceivedPerDay { get { return messagesReceivedPerDay; } set { messagesReceivedPerDay = value; } }
 

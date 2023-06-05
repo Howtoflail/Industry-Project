@@ -17,6 +17,11 @@ public class BezierFollow : MonoBehaviour
 
     private bool coroutineAllowed;
 
+    private float timeWhenMessageSent = 0f;
+
+    [SerializeField]
+    private float timeToWaitForSendingMessageAnimation = 6f;
+
     void Start()
     {
         // routeToGo = 0;
@@ -26,25 +31,40 @@ public class BezierFollow : MonoBehaviour
     }
 
 
-        public void OnClickMove()
+    public void OnClickMove()
     {
         if (coroutineAllowed)
         {
-            routeToGo = Random.Range(0,3);
+            routeToGo = Random.Range(0, 3); //This can return 0, 1 or 2
             StartCoroutine(GoByTheRoute(routeToGo));
 
         }
     }
 
-
-    private IEnumerator GoByTheRoute(int routeNum)
+    public void SendMessageAfterWriting()
     {
+        if (coroutineAllowed) 
+        {
+            timeWhenMessageSent = Time.time;
+            routeToGo = 3;
+            StartCoroutine(GoByTheRoute(routeToGo));
+        }
+    }
+
+
+    private IEnumerator GoByTheRoute(int routeNumber)
+    {
+        if(timeWhenMessageSent != 0f)
+        {
+            yield return new WaitForSeconds(timeToWaitForSendingMessageAnimation);
+        }
+
         coroutineAllowed = false;
 
-        Vector3 p0 = routes[routeNum].GetChild(0).position;
-        Vector3 p1 = routes[routeNum].GetChild(1).position;
-        Vector3 p2 = routes[routeNum].GetChild(2).position;
-        Vector3 p3 = routes[routeNum].GetChild(3).position;
+        Vector3 p0 = routes[routeNumber].GetChild(0).position;
+        Vector3 p1 = routes[routeNumber].GetChild(1).position;
+        Vector3 p2 = routes[routeNumber].GetChild(2).position;
+        Vector3 p3 = routes[routeNumber].GetChild(3).position;
 
         while (tParam < 1)
         {
