@@ -15,7 +15,7 @@ public class DataExample : MonoBehaviour
 	
 	[FirestoreDocumentId] //lets the manager know which document this is
 	public string key { get { return _key; } set { _key = value; } }
-	[FirestoreProperty] //marked to be saved
+	[FirestoreProperty("Name")] //marked to be saved
 	public string name { get { return _name; } set { _name = value; } }
 
 	public string ToString()

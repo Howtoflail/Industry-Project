@@ -17,13 +17,13 @@ public class ResponseController : MonoBehaviour
 
     void Update()
     {
-        if(mail.active == true)
+        /*if(mail.active == true)
         {
             if(Input.GetKey("mouse 0"))
             {
                 OpenMessage();
             }
-        }
+        }*/
     }
     
     public void HandleInputData(int response)
@@ -48,14 +48,14 @@ public class ResponseController : MonoBehaviour
     {
         if(open == false)
             {
-                panelResponse.active = true; 
+                panelResponse.SetActive(true); 
                 open = true;
             }
     }
 
     public IEnumerator CloseScreen()
     {
-        panelResponse.active = false;
+        panelResponse.SetActive(false);
         float waitTime = 4;
         yield return new WaitForSeconds(waitTime);
         open = false;
