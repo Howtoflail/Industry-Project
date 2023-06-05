@@ -26,9 +26,13 @@ public class MailGamePlayer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         rb.AddForce(new Vector2(0, -gravity));
+    }
+
+    void Update()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             rb.velocity = Vector2.zero;
@@ -49,11 +53,12 @@ public class MailGamePlayer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-      if (other.tag == "PlayerDetector")
+        if (other.tag == "PlayerDetector")
         {
             handler.AddScore();
         }
     }
+
     public bool IsDead()
     {
         return isDead;

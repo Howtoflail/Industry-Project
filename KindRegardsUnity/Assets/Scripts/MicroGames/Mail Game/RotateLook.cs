@@ -75,7 +75,7 @@ public class RotateLook : MonoBehaviour
     // }
 
     float r = 0f;
-    void Update()
+    void FixedUpdate()
     {
         currentY = player.transform.position.y;
 
@@ -85,8 +85,8 @@ public class RotateLook : MonoBehaviour
         //Basically lerp
         float s = playerVelocity;
         print("Velocity = " + s);
-        r = r - (r - s * 60) * 0.05f;
-        transform.rotation = Quaternion.Euler(0, 0, r * 10);
+        r = r - (r - s * 45) * 4f * Time.deltaTime;
+        transform.rotation = Quaternion.Euler(0, 0, r);
         // print(Mathf.Sign(s));
     }
 
