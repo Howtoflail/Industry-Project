@@ -1,3 +1,4 @@
+using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,11 @@ public class BezierFollow : MonoBehaviour
 {
     [SerializeField]
     private Transform[] routes;
+
+    [SerializeField]
+    private GameObject messageHandlingObject;
+
+    private MessageHandling messageHandling;
 
     private int routeToGo;
 
@@ -24,7 +30,7 @@ public class BezierFollow : MonoBehaviour
 
     void Start()
     {
-        // routeToGo = 0;
+        messageHandling = messageHandlingObject.GetComponent<MessageHandling>();
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
@@ -43,12 +49,18 @@ public class BezierFollow : MonoBehaviour
 
     public void SendMessageAfterWriting()
     {
-        if (coroutineAllowed) 
+        messageHandling.SendMessage().ContinueWithOnMainThread((task) => 
         {
-            timeWhenMessageSent = Time.time;
-            routeToGo = 3;
-            StartCoroutine(GoByTheRoute(routeToGo));
-        }
+            Debug.Log($"Sending a message returns: {task.Result}");
+
+            if (coroutineAllowed && task.Result)
+            {
+                Debug.Log($"If check works");
+                timeWhenMessageSent = Time.time;
+                routeToGo = 3;
+                StartCoroutine(GoByTheRoute(routeToGo));
+            }
+        });
     }
 
 

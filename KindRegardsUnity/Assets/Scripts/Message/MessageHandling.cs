@@ -286,7 +286,7 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
-    async void SendMessage()
+    public async Task<bool> SendMessage()
     {
         //Send a message to 33% percent of the active players
         //Prioritize players with less messages received than others
@@ -437,17 +437,21 @@ public class MessageHandling : MonoBehaviour
             //Playing animation for sending a message
             messageObject.SetActive(true);
             messageAnimator.SetTrigger("MessageCreated");
+
+            return true;
         }
         else
         {
             Debug.Log("There are no users to send messages to!");
+
+            return false;
         }
         
     }
 
-    public void SendMessageOnClick()
+    public async void SendMessageOnClick()
     {
-        SendMessage();
+        await SendMessage();
     }
 
     //This should be used in Start()
