@@ -146,9 +146,11 @@ public class UserHandling : MonoBehaviour
             var user = new
             {
                 //user name should be retrieved from player input
-                Name = "Emanuel",
+                Name = "Tribal",
+                isActive = true,
                 lastTimeLoggedIn = FieldValue.ServerTimestamp,
-                isActive = true
+                lastTimeMessagedReceived = FieldValue.ServerTimestamp,
+                messagesReceivedPerDay = 0
             };
 
             firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>

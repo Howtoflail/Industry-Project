@@ -286,6 +286,29 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
+    async Task<string> GetUserNameOfSender(string id)
+    {
+        string userName = "";
+
+        await firestore.Collection("users").Document(id).GetSnapshotAsync().ContinueWith((task) =>
+        {
+            DocumentSnapshot documentSnapshot = task.Result;
+            if(documentSnapshot.Exists == true)
+            {
+                Dictionary<string, object> user = documentSnapshot.ToDictionary();
+                foreach(KeyValuePair<string, object> pair in user) 
+                {
+                    if(pair.Key == "Name")
+                    {
+                        userName = pair.Value.ToString();
+                    }
+                }
+            }
+        });
+
+        return userName;
+    }
+
     public async Task<bool> SendMessage()
     {
         //Send a message to 33% percent of the active players
@@ -305,15 +328,7 @@ public class MessageHandling : MonoBehaviour
         }
 
         //Getting the name of the user that sent the message
-        for(int i = 0;i < allUserIds.Count; i++)
-        {
-            (string id, string name) = allUserIds[i];
-            if(userId == id)
-            {
-                userNameOfSender = name;
-                break;
-            }
-        }
+        userNameOfSender = await GetUserNameOfSender(userId);
 
         //Algorithm to send message to players
 
