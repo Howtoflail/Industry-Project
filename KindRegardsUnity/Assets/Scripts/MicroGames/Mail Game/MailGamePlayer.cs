@@ -46,7 +46,6 @@ public class MailGamePlayer : MonoBehaviour
         {
             rb.freezeRotation = true;
             rb.velocity = Vector2.zero;
-            obstacles.FreezeAll();
             handler.GameOver();
         }
     }
@@ -66,6 +65,6 @@ public class MailGamePlayer : MonoBehaviour
 
     public void ResetPosition()
     {
-        this.GetComponent<RectTransform>().localPosition = Vector3.zero;
+        this.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, -20);
     }
 }

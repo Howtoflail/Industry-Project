@@ -49,3 +49,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Sky
+    uniqueID: 2402633089
+    locked: 0
+  - name: Cloud
+    uniqueID: 2252252909
+    locked: 0
+  - name: Middle
+    uniqueID: 3414634801
+    locked: 0
+  - name: Front
+    uniqueID: 1858661345
+    locked: 0
+  - name: Game
+    uniqueID: 4052216177
+    locked: 0

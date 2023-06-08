@@ -10,12 +10,14 @@ public class MailGameHandler : MonoBehaviour
 
     MailGamePlayer player;
     MailGameObstacles obstacles;
+    Background background;
     public GameObject startButton;
 
     void Start()
     {
         obstacles = GameObject.Find("MailGame").GetComponent<MailGameObstacles>();
         player = GameObject.Find("MailGamePlayer").GetComponent<MailGamePlayer>();
+        background = GameObject.Find("MailGameBackground").GetComponent<Background>();
         inGame = false;
         player.gameObject.SetActive(false);
         startButton.SetActive(true);
@@ -32,6 +34,7 @@ public class MailGameHandler : MonoBehaviour
         obstacles.DestroyAllObstacles();
         player.ResetPosition();
         obstacles.StartSpawning();
+        background.StartParallax();
         inGame = true;
         return;
     }
@@ -47,5 +50,7 @@ public class MailGameHandler : MonoBehaviour
         Debug.Log("Game Over");
         inGame = false;
         startButton.SetActive(true);
+        obstacles.FreezeAll();
+        background.StopParallax();
     }
 }
