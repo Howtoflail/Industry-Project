@@ -36,7 +36,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("SettingsIn", false);
-                        yield return new WaitForSeconds(2);
                         break;
                     case 4:
                         //Starts the animation
@@ -48,7 +47,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("MessageIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 8:
                         //Starts the animation
@@ -60,7 +58,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("StickersIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 9:
                         //Starts the animation
@@ -72,7 +69,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("DiaryIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 12:
                         //Starts the animation
@@ -84,7 +80,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("MinigamesIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                 }
             }
@@ -182,7 +177,6 @@ public class CameraAnimationController : MonoBehaviour
                     //Make the sidebar visible again
                     Show();
                     cameraDTO.cameraMove.SetBool("PaperPlaneIn", false);
-                    yield return new WaitForSeconds(4);
                     break;
             }
             cameraDTO.state = newState;
