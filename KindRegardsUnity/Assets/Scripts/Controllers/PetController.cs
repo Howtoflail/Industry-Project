@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
@@ -18,7 +17,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEditor.PackageManager.Requests;
 using System.Diagnostics;
 using System.Net;
 using System.IO;
@@ -174,11 +172,13 @@ public class PetController : MonoBehaviour
         using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
         {
 
-            string json = "{\"userId\":\""+ result.id +"\"," +
-                          "\"petKind\":\"" + (int)currentPet.petKind + "\","+
-                          "\"colour\":\"" + colorToString(c) + "\"," +
-                          "\"name\":\"" + name.text + "\"}";
-           
+            string json = "{" +
+                            $"\"userId\": {result.id}," +
+                            $"\"petKind\": {(int)currentPet.petKind}," +
+                            $"\"colour\": {2}," +
+                            $"\"name\": \"{name.text}\"" +
+                        "}";
+            
             streamWriter.Write(json);
         }
 

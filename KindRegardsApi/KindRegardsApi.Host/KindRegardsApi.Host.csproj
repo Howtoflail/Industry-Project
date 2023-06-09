@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KindRegardsApi.Presentation\KindRegardsApi.Presentation.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Presentation.IoC\KindRegardsApi.Presentation.IoC.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Logic.IoC\KindRegardsApi.Logic.IoC.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Data.IoC\KindRegardsApi.Data.IoC.csproj" />
+  </ItemGroup>
+
+</Project>

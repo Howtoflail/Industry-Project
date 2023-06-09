@@ -10,6 +10,7 @@ public class FileManager : MonoBehaviour
     private string pathCode = @"MyCode.bin";
     private string pathEntries = @"MyEntries.bin";
 
+
     public string GetCodeFromFile()
     {
         if (File.Exists(pathCode))

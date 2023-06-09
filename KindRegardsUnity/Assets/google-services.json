@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "322466863085",
+    "project_id": "garage2020-b2597",
+    "storage_bucket": "garage2020-b2597.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322466863085:android:459eb99bf3cf34ca48b9e4",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.KindRegards"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322466863085-4h9oq13ki8e48umsfd0jbousediolp5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOfy9tRVwjTLHGNgL2Vf0R25yFG8YauDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322466863085-4h9oq13ki8e48umsfd0jbousediolp5e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

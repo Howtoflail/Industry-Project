@@ -1,16 +1,19 @@
 version: "3.4"
 services:
   db-service:
-    image: mariadb
+    image: mysql
     container_name: db-service
     restart: unless-stopped
     tty: true
+    volumes:
+      - './DockerDB:/docker-entrypoint-initdb.d'
+    ports:
+      - '3306:3306'
     environment:
-      MARIADB_DATABASE: "kindregards"
-      MARIADB_USER: "root"
-      MARIADB_PASSWORD: ""
-      MARIADB_ROOT_PASSWORD: ""
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: "kindregards"
+      MYSQL_PASSWORD: ""
   api-service:
       depends_on:
         - 'db-service'
