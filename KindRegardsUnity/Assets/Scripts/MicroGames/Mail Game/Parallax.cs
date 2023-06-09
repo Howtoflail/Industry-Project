@@ -33,7 +33,6 @@ public class Parallax : MonoBehaviour
             transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
 
             // If the GameObject has moved past the reset position, reset its position to the initial position
-            Debug.Log(transform.localPosition.x);
             if (transform.position.x <= resetPosition)
             {
                 transform.position = startPosition;

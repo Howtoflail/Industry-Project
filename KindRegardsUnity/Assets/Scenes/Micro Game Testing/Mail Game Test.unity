@@ -821,7 +821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b5ae4fe345384e46b0ec461db072655, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topObstacle: {fileID: 453387565826458342, guid: ff75f969bf7c6de46a4fd5485ad5d66f,
+  topObstacle: {fileID: 453387565826458342, guid: 34d247c8b7ac18246838652bdeadf9a3,
     type: 3}
   bottomObstacle: {fileID: 61976488165982844, guid: 3b5c6e27f6fc40d4883de9d29cf3924d,
     type: 3}
@@ -830,7 +830,7 @@ MonoBehaviour:
   endPrefab: {fileID: 8495595170421816461, guid: ff7789c97b0850944be211d5438642ea,
     type: 3}
   obstacleSpawnPositionX: 50
-  gap: 20
+  gap: 10
   maxGapHeight: 10
   minGapHeight: -10
   timeBetweenObstacles: 3
@@ -6530,7 +6530,7 @@ GameObject:
   - component: {fileID: 1103831456}
   - component: {fileID: 1103831457}
   m_Layer: 5
-  m_Name: Background
+  m_Name: MailGameBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
