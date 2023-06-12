@@ -8,6 +8,11 @@ TagManager:
   - CodeInput
   - Slider
   - FirestoreManager
+  - Sticker
+  - UserInfo
+  - StickerInfo
+  - UIManager
+  - PetInfo
   layers:
   - Default
   - TransparentFX
