@@ -8,6 +8,7 @@ public class CameraAnimationController : MonoBehaviour
     private CameraDTO cameraDTO;
     CameraController cameraController;
     [SerializeField] Canvas canvas;
+	[SerializeField] private BookDirector bookDirector;
 
     private void Start()
     {
@@ -49,10 +50,12 @@ public class CameraAnimationController : MonoBehaviour
                         cameraDTO.cameraMove.SetBool("MessageIn", false);
                         break;
                     case 8:
-                        //Starts the animation
-                        cameraDTO.cameraMove.SetBool("StickersIn", true);
                         //Make the sidebar invisible so the button back can't be pressed
                         Hide();
+						bookDirector.Close();
+						yield return new WaitForSeconds(3);
+                        //Starts the animation
+                        cameraDTO.cameraMove.SetBool("StickersIn", true);
                         //waits for the animation to finish
                         yield return new WaitForSeconds(3);
                         //Make the sidebar visible again
@@ -126,6 +129,8 @@ public class CameraAnimationController : MonoBehaviour
                     cameraDTO.cameraMove.SetBool("StickersOut", false);
                     //waits for the animation to finish
                     yield return new WaitForSeconds(2);
+					bookDirector.Open();
+					yield return new WaitForSeconds(5);
                     //Make the sidebar visible again
                     Show();
                     break;
