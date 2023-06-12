@@ -20,26 +20,31 @@ public static class FirestoreDataTransferer
 			
 			if (source.TryGetValue<object>(name, out object val))
 			{
-				switch(prop.GetValue(target))
+				var t = prop.PropertyType;
+				
+				if (t == typeof(bool))
 				{
-					case bool:
-						prop.SetValue(target, (bool)val);
-						break;
-					case decimal:
-						prop.SetValue(target, (decimal)val);
-						break;
-					case double:
-						prop.SetValue(target, (double)val);
-						break;
-					case float:
-						prop.SetValue(target, (float)val);
-						break;
-					case int:
-						prop.SetValue(target, (int)val);
-						break;
-					case string:
-						prop.SetValue(target, (string)val);
-						break;
+					prop.SetValue(target, (bool)val);
+				}
+				else if(t == typeof(decimal))
+				{
+					prop.SetValue(target, (decimal)val);
+				}
+				else if(t == typeof(double))
+				{
+					prop.SetValue(target, (double)val);
+				}
+				else if(t == typeof(float))
+				{
+					prop.SetValue(target, (float)val);
+				}
+				else if(t == typeof(int))
+				{
+					prop.SetValue(target, (int)val);
+				}
+				else if(t == typeof(string))
+				{
+					prop.SetValue(target, (string)val);
 				}
 			}
 		}
