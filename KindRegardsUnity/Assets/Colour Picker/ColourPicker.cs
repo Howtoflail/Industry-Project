@@ -126,6 +126,8 @@ public class ColourPicker : MonoBehaviour
 
     public void SetActualColour (Color c)
     {
+		var petInfo = GameObject.FindWithTag("PetInfo").GetComponent<PetInfo>();
+		petInfo.petColor = c.ToString();
         //owl
         owlBody.GetComponent<MeshRenderer>().material.color = c;
         owlFace.GetComponent<MeshRenderer>().material.color = c;

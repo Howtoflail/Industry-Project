@@ -28,6 +28,7 @@ public class PetController : MonoBehaviour
     private GameObject pets;
     private UIController ui;
 
+	private PetInfo petInfo;
     private User currentUser;
     private PetDTO currentPet;
 
@@ -35,53 +36,62 @@ public class PetController : MonoBehaviour
     [SerializeField] public TextMeshProUGUI name;
     [SerializeField] public GameObject colourManager;
 
-    async void Start()
+    void Start()
     {
+		petInfo = GameObject.FindWithTag("PetInfo").GetComponent<PetInfo>();
         pets = GameObject.Find("Pets");
-        states = Resources.FindObjectsOfTypeAll(typeof(PetState));
+        states = Resources.FindObjectsOfTypeAll(typeof(PetState)); //gets all loaded scripts
         ui = canvas.GetComponent<UIController>();
-        CheckIfUserExists();
         currentPet= new PetDTO();
+		
+		petInfo.onLoaded.AddListener(CheckUser);
     }
 
-    //Check the db to see if there already is a user with this name 
-    private async void CheckIfUserExists()
-    {
-            var request = UnityWebRequest.Get(APIUrl.CreateV1("/user/l" + Environment.UserName));
-            UserDTO user = await RequestExecutor.Execute<UserDTO>(request);
-        try
-        {
-           if(user.Id > 0)
-            {
-                UserFound(user);
-            }
-        }
-        //If user was not innitialized it will throw a null referenceExpection
-        catch(NullReferenceException ex)
-        {
-            UserNotFound();
-        }
-    }
+	private void CheckUser()
+	{
+		if (petInfo.petName == null)
+		{
+			UserNotFound();
+		}
+		else
+		{
+			UserFound();
+		}
+	}
     
+	private int petChoise
+	{
+		get
+		{
+			Enum.TryParse(petInfo.petType, out PetStateEnum result);
+			return (int)result;
+		}
+		
+		set
+		{
+			var len = Enum.GetNames(typeof(PetStateEnum)).Length;
+			petInfo.petType = ((PetStateEnum)( (value % len + len) % len )).ToString(); //modulo operation that handles negatives
+		}
+	}
+
     private void UserNotFound()
     {
-       
-        //if not continues here
         pets.transform.position = new Vector3(0, 0.56f, 0);
         ui.NewUser();
-        currentPet.petKind = 0;
+		petChoise = 0;
         states = Resources.FindObjectsOfTypeAll(typeof(PetState));
         ShowPet();
     }
-    private async void UserFound(UserDTO user)
+    private void UserFound()
     {                
-        var requestPet = UnityWebRequest.Get(APIUrl.CreateV1("/pet/" + user.Id));
-        PetDTO pet = await RequestExecutor.Execute<PetDTO>(requestPet);
-        PetStateEnum pEnum = (PetStateEnum)pet.petKind;
-            Pet p  = new Pet(pet.Id, pEnum, pet.Name, pet.Colour, pet.userId);
-            User u = new User(user.Id, user.diary_code, p, user.computer_code);
-            currentUser = u;
-        Color c = stringToColor(pet.Colour);
+        //var requestPet = UnityWebRequest.Get(APIUrl.CreateV1("/pet/" + user.Id));
+        //PetDTO pet = await RequestExecutor.Execute<PetDTO>(requestPet);
+        //PetStateEnum pEnum = (PetStateEnum)pet.petKind;
+		//Pet p  = new Pet(pet.Id, pEnum, pet.Name, pet.Colour, pet.userId);
+		//User u = new User(user.Id, user.diary_code, p, user.computer_code);
+		//currentUser = u;
+        Color c = stringToColor(petInfo.petColor);
+		print(c);
         colourManager.GetComponent<ColourPicker>().SetActualColour(c);
         ShowPetFinal();
         ui.Back();
@@ -109,35 +119,39 @@ public class PetController : MonoBehaviour
 
     private void ShowPet()
     {
-        foreach (PetState state in states) state.DetectActive((PetStateEnum)currentPet.petKind);
+        foreach (PetState state in states) state.DetectActive((PetStateEnum)petChoise);
     }
     private void ShowPetFinal()
     {
-        foreach (PetState state in states) state.DetectActive((PetStateEnum)currentUser.pet.petKind);
+        foreach (PetState state in states) state.DetectActive((PetStateEnum)petChoise);
     }
 
     public void Next()
     {
-        int petID = (int)currentPet.petKind;
-        petID++;
-        if (petID > states.Length - 3) petID = 0;
-        currentPet.petKind = petID;
-        ShowPet();
+		petChoise++;
+		ShowPet();
     }
 
     public void Previous()
     {
-        int petID = (int)currentPet.petKind;
-        petID--;
-        if (petID < 0) petID = 2;
-        currentPet.petKind = petID;
-        ShowPet();
+		petChoise--;
+		ShowPet();
     }
 
 
     public void Accept()
     {
-        var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/user");
+		var mgr = GameObject.FindWithTag("FirestoreManager").GetComponent<FirestoreManager>();
+
+		if (mgr.ready == true)
+		{
+			petInfo.petName = name.text;
+			
+			var usr = GameObject.FindWithTag("UserInfo").GetComponent<UserInfo>();
+			mgr.SetObject(usr, id => {});
+			mgr.SetObject(petInfo, id => {});
+		}
+        /*var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/user");
         httpWebRequest.ContentType = "application/json";
         httpWebRequest.Method = "POST";
 
@@ -159,11 +173,11 @@ public class PetController : MonoBehaviour
             addPet(u);
           
         }
-
+		*/
     }
     private void addPet(User result)
     {
-        var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/pet");
+        /*var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/pet");
         httpWebRequest.ContentType = "application/json";
         httpWebRequest.Method = "POST";
         Color c = colourManager.GetComponent<ColourPicker>().getColor();
@@ -190,7 +204,7 @@ public class PetController : MonoBehaviour
             Pet p = new Pet(pet.Id, (PetStateEnum)pet.petKind, pet.Name, pet.Colour);
             User u = new User(result.id,  result.diary_code,p, result.computer_code);
             CheckIfUserExists();
-        }
+        }*/
     }
 
 }
