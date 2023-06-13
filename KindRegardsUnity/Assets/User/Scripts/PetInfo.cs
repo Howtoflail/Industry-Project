@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Firebase.Firestore;
 
-[StorageCollection("Pets")]
+[StorageCollection("pets")]
 [FirestoreData]
 public class PetInfo : MonoBehaviour
 {
