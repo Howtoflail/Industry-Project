@@ -1,18 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase.Firestore;
 
+[FirestoreData]
+[StorageCollection("stickers")]
 public class Sticker : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	[FirestoreDocumentId]
+	public string id
+	{
+		get;
+		set;
+	}
+	
+	[FirestoreProperty]
+	public string user
+	{
+		get;
+		set;
+	}
+	
+	[FirestoreProperty]
+	public int stickerNumber
+	{
+		get;
+		set;
+	}
 }
