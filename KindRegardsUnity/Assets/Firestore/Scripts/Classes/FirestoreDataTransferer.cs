@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reflection;
 using Firebase.Firestore;
@@ -40,11 +41,20 @@ public static class FirestoreDataTransferer
 				}
 				else if(t == typeof(int))
 				{
-					prop.SetValue(target, (int)val);
+					prop.SetValue(target, Convert.ToInt32(val));
 				}
 				else if(t == typeof(string))
 				{
 					prop.SetValue(target, (string)val);
+				}
+			}
+			else
+			{
+				var attr = prop.GetCustomAttributes(typeof(FirestoreDocumentIdAttribute)).FirstOrDefault() as FirestoreDocumentIdAttribute;
+				
+				if (attr != null)
+				{
+					prop.SetValue(target, source.Id);
 				}
 			}
 		}
