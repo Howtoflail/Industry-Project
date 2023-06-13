@@ -26,6 +26,7 @@ using System.IO;
 public class PetController : MonoBehaviour
 {
     private PetDTO petDTO;
+    [SerializeField]
     private UnityEngine.Object[] states;
     private GameObject pets;
     private UIController ui;
@@ -72,7 +73,7 @@ public class PetController : MonoBehaviour
         pets.transform.position = new Vector3(0, 0.56f, 0);
         ui.NewUser();
         currentPet.petKind = 0;
-        states = Resources.FindObjectsOfTypeAll(typeof(PetState));
+        // states = Resources.FindObjectsOfTypeAll(typeof(PetState));
         ShowPet();
     }
     private async void UserFound(UserDTO user)
@@ -122,7 +123,7 @@ public class PetController : MonoBehaviour
     {
         int petID = (int)currentPet.petKind;
         petID++;
-        if (petID > states.Length - 3) petID = 0;
+        if (petID > states.Length - 6) petID = 0;
         currentPet.petKind = petID;
         ShowPet();
     }
@@ -191,6 +192,16 @@ public class PetController : MonoBehaviour
             User u = new User(result.id,  result.diary_code,p, result.computer_code);
             CheckIfUserExists();
         }
+    }
+
+    public PetDTO GetPetDTO()
+    {
+        return currentPet;
+    }
+
+    public void SetColorCurrentPet(Color petColor)
+    {
+        colourManager.GetComponent<ColourPicker>().SetActualColour(petColor);
     }
 
 }
