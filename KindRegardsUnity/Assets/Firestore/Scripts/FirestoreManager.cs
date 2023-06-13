@@ -18,7 +18,11 @@ public class FirestoreManager : MonoBehaviour
 		private set;
 	}
 
-	private FirebaseFirestore store;
+	public FirebaseFirestore store
+	{
+		get;
+		private set;
+	}
 
 	private string GetCollectionName(object obj)
 	{
