@@ -35,6 +35,8 @@ public class PetController : MonoBehaviour
     [SerializeField]public GameObject canvas;
     [SerializeField] public TextMeshProUGUI name;
     [SerializeField] public GameObject colourManager;
+	
+	private GameObject stickerRes = Resources.Load<GameObject>("Sticker");
 
     void Start()
     {
@@ -147,64 +149,16 @@ public class PetController : MonoBehaviour
 		{
 			petInfo.petName = name.text;
 			
+			var stickers = GameObject.FindWithTag("StickerInfo").GetComponent<StickerInfo>();
+			
+			for (int i = 0; i < 4; i++)
+			{
+				stickers.Add(1);
+			}
+			
 			var usr = GameObject.FindWithTag("UserInfo").GetComponent<UserInfo>();
 			mgr.SetObject(usr, id => {});
 			mgr.SetObject(petInfo, id => {});
 		}
-        /*var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/user");
-        httpWebRequest.ContentType = "application/json";
-        httpWebRequest.Method = "POST";
-
-        using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-        {
-            string json = "{\"diary_code\":\"0\"," +
-                          "\"computer_code\":\"l"+ Environment.UserName + "\"}";
-
-            streamWriter.Write(json);
-        }
-
-        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-        {
-            var result = streamReader.ReadToEnd();
-            var person = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDTO>(result);
-            User u = new User(person.Id, person.diary_code, person.computer_code );  
-            UnityEngine.Debug.Log(u.id);
-            addPet(u);
-          
-        }
-		*/
     }
-    private void addPet(User result)
-    {
-        /*var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:8080/api/v1/pet");
-        httpWebRequest.ContentType = "application/json";
-        httpWebRequest.Method = "POST";
-        Color c = colourManager.GetComponent<ColourPicker>().getColor();
-        
-
-        using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-        {
-
-            string json = "{" +
-                            $"\"userId\": {result.id}," +
-                            $"\"petKind\": {(int)currentPet.petKind}," +
-                            $"\"colour\": {2}," +
-                            $"\"name\": \"{name.text}\"" +
-                        "}";
-            
-            streamWriter.Write(json);
-        }
-
-        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-        {
-            var resultPet = streamReader.ReadToEnd();
-            var pet = Newtonsoft.Json.JsonConvert.DeserializeObject<PetDTO>(resultPet);
-            Pet p = new Pet(pet.Id, (PetStateEnum)pet.petKind, pet.Name, pet.Colour);
-            User u = new User(result.id,  result.diary_code,p, result.computer_code);
-            CheckIfUserExists();
-        }*/
-    }
-
 }
