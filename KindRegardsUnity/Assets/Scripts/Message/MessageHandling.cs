@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class MessageHandling : MonoBehaviour
@@ -15,8 +16,13 @@ public class MessageHandling : MonoBehaviour
     private List<string> messageIds = new List<string>();
     private List<Message> messages = new List<Message>();
     private List<(GameObject, GameObject)> setsOfMessages = new List<(GameObject, GameObject)>();
+    private List<Reply> repliesReceived = new List<Reply>();
+    private List<Reply> repliesSent = new List<Reply>();
+    private List<(GameObject, GameObject, GameObject, GameObject)> setsOfRepliesAndMessages = new List<(GameObject, GameObject, GameObject, GameObject)>();
     private string userId; 
     private bool ok = false;
+    private int numberOfNewMessages = 0;
+    private int numberOfNewReplies = 0;
 
     [SerializeField]
     private Text textMessagesCounter;
@@ -30,6 +36,32 @@ public class MessageHandling : MonoBehaviour
     private GameObject panelResponse;
     [SerializeField]
     private GameObject messageObject;
+    [SerializeField]
+    private GameObject replyLabel;
+    [SerializeField]
+    private Text textRepliesCounter;
+    [SerializeField]
+    private GameObject replyMessageBox;
+    [SerializeField]
+    private GameObject replyBox;
+    [SerializeField]
+    private GameObject textReplyMessagePrefab;
+    [SerializeField]
+    private GameObject textReplyMessageNamePrefab;
+    [SerializeField]
+    private GameObject textReplyPrefab;
+    [SerializeField]
+    private GameObject textReplyNamePrefab;
+    [SerializeField]
+    private GameObject panelReply;
+    [SerializeField]
+    private Button openMessagesButton;
+    [SerializeField]
+    private Button openRepliesButton;
+    [SerializeField]
+    private Button sendMessageButton;
+    [SerializeField]
+    private GameObject cantSendMessageText;
 
     private Animator messageAnimator;
     private UserHandling userHandling;
@@ -54,13 +86,21 @@ public class MessageHandling : MonoBehaviour
     //New messages are messages that haven't been replied to by a player yet
     //and they should be able to be seen everytime a player goes to mailbox
     //
-    //repliedBy should be a subcollection for every message which should contain documents with:
+    //replies should be a collection which should contain documents with:
+    //messageId - id of the message
     //from - id of the user that replied to the message
+    //to - id of the user that sent the message initially / receiver of reply
     //text - message from the user that replied to the message
+    //timestamp
+    //read - bool that is set to true when a user reads the reply and will not appear afterwards
+    //ADD SEE REPLIES BUTTON
 
-    Task DisplayMessages()
+    async Task GetMessagesForCurrentUser()
     {
-        return firestore.Collection("messages").GetSnapshotAsync().ContinueWithOnMainThread(task => 
+        //Get the replies of the user to set messages
+        await GetRepliesForCurrentUser();
+
+        await firestore.Collection("messages").GetSnapshotAsync().ContinueWithOnMainThread(task => 
         { 
             QuerySnapshot allMessagesSnapshot = task.Result;
 
@@ -75,6 +115,8 @@ public class MessageHandling : MonoBehaviour
                 string textMessage = "";
                 string timestamp = "";
                 string messageFromId = "";
+                List<object> objectMessageToIds = new List<object>();
+                List<string> messageToIds = new List<string>();
 
                 Dictionary<string, object> message = new Dictionary<string, object>();
                 message = documentSnapshot.ToDictionary();
@@ -99,27 +141,293 @@ public class MessageHandling : MonoBehaviour
                     {
                         messageFromId = pair.Value.ToString();
                     }
+                    else if(pair.Key == "to")
+                    {
+                        objectMessageToIds = (List<object>)pair.Value;
+                    }
                 }
 
-                //Debug.Log("");
+                foreach(var objectMessageToId in objectMessageToIds) 
+                {
+                    messageToIds.Add(objectMessageToId.ToString());
+                }
 
-                //If the message is sent by the user or it has been replied to, it shouldn't be listed to new messages
-                if (name != "" && textMessage != "" && timestamp != "" && messageFromId != userId)
+                //If the message has been replied to, it shouldn't be listed to new messages
+                if (name != "" && textMessage != "" && timestamp != "" && messageToIds.Contains(userId) == true)
+                {
+                    bool messageRepliedTo = false;
+
+                    foreach(Reply reply in repliesSent)
+                    {
+                        if(reply.MessageId == documentSnapshot.Id)
+                        {
+                            messageRepliedTo = true; 
+                            break;
+                        }
+                    }
+
+                    if (messageRepliedTo == false) 
+                    {
+                        timestamp = timestamp.Substring(11, 10) + " " + timestamp.Substring(22, 8);
+                        DateTime dateTimeTimeStamp = DateTime.Parse(timestamp);
+                        //Add two hours because of UTC+2
+                        dateTimeTimeStamp = dateTimeTimeStamp.AddHours(2);
+
+                        messages.Add(new Message(documentSnapshot.Id, messageFromId, messageToIds, name, textMessage, dateTimeTimeStamp));
+
+                        Debug.Log($"New messages: {message.Count}");
+                    }
+                    else
+                    {
+                        Debug.Log($"Message has been replied to!");
+                    }
+                }
+            }
+        });
+    }
+
+    async Task GetRepliesForCurrentUser()
+    {
+        await firestore.Collection("replies").GetSnapshotAsync().ContinueWith(task => 
+        {
+            QuerySnapshot allRepliesSnapshot = task.Result;
+
+            foreach(DocumentSnapshot documentSnapshot in allRepliesSnapshot.Documents)
+            {
+                string from = "";
+                string to = "";
+                string name = "";
+                string messageId = "";
+                string text = "";
+                string timestamp = "";
+                bool read = false;
+
+                Dictionary<string, object> reply = new Dictionary<string, object>();
+                reply = documentSnapshot.ToDictionary();
+
+                foreach(KeyValuePair<string, object> pair in reply)
+                {
+                    if(pair.Key == "from")
+                    {
+                        from = pair.Value.ToString();
+                    }
+                    else if(pair.Key == "to")
+                    {
+                        to = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "name")
+                    {
+                        name = pair.Value.ToString();
+                    }
+                    else if(pair.Key == "messageId")
+                    {
+                        messageId = pair.Value.ToString();
+                    }
+                    else if(pair.Key == "text")
+                    {
+                        text = pair.Value.ToString();
+                    }
+                    else if(pair.Key == "timestamp")
+                    {
+                        timestamp = pair.Value.ToString();
+                    }
+                    else if(pair.Key == "read")
+                    {
+                        read = (bool)pair.Value;
+                    }
+                }
+
+                //If the reply has been read, don't display it again
+                if(from != "" && to == userId && name != "" && messageId != "" && text != "" && timestamp != "" && read == false)
                 {
                     timestamp = timestamp.Substring(11, 10) + " " + timestamp.Substring(22, 8);
                     DateTime dateTimeTimeStamp = DateTime.Parse(timestamp);
                     //Add two hours because of UTC+2
                     dateTimeTimeStamp = dateTimeTimeStamp.AddHours(2);
 
-                    messages.Add(new Message(name, textMessage, dateTimeTimeStamp));
+                    repliesReceived.Add(new Reply(documentSnapshot.Id, name, from, to, messageId, text, dateTimeTimeStamp, read));
+                }
+                else if(from == userId && to != "" && name != "" && messageId != "" && text != "" && timestamp != "")
+                {
+                    timestamp = timestamp.Substring(11, 10) + " " + timestamp.Substring(22, 8);
+                    DateTime dateTimeTimeStamp = DateTime.Parse(timestamp);
+                    //Add two hours because of UTC+2
+                    dateTimeTimeStamp = dateTimeTimeStamp.AddHours(2);
 
-                    Debug.Log($"New messages: {message.Count}");
-
-                   /* Text textUI = Instantiate(textPrefab, chatMessagesUI.transform);
-                    textUI.text = textMessage + "\n" + name + "\n" + timestamp;*/
+                    repliesSent.Add(new Reply(documentSnapshot.Id, name, from, to, messageId, text, dateTimeTimeStamp, read));
                 }
             }
         });
+    }
+
+    async Task WaitAndCreateUnreadReplies()
+    {
+        textRepliesCounter.text = $"You have {repliesReceived.Count} new replies";
+
+        for(int i = 0; i < repliesReceived.Count; i++) 
+        {
+            if(i == 0) 
+            {
+                //Instantiate first set of prefabs and make active
+                //The message
+                GameObject textReplyMessage = Instantiate(textReplyMessagePrefab, replyMessageBox.transform);
+                GameObject textReplyMessageName = Instantiate(textReplyMessageNamePrefab, replyMessageBox.transform);
+                //The reply itself
+                GameObject textReply = Instantiate(textReplyPrefab, replyBox.transform);
+                GameObject textReplyName = Instantiate(textReplyNamePrefab, replyBox.transform);
+
+                //Set the text
+                TextMeshProUGUI textReplyMessageUI = textReplyMessage.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyMessageNameUI = textReplyMessageName.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyUI = textReply.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyNameUI = textReplyName.GetComponent<TextMeshProUGUI>();
+
+                Message message = await GetMessageFromReply(repliesReceived[i].MessageId);
+
+                textReplyMessageUI.text = message.TextMessage;
+                textReplyMessageNameUI.text = $"Groetjes, \n {message.Name}";
+                textReplyUI.text = repliesReceived[i].TextMessage;
+                textReplyNameUI.text = $"Veel sterke, \n {repliesReceived[i].Name}";
+
+                //Add to list
+                setsOfRepliesAndMessages.Add((textReplyMessage, textReplyMessageName, textReply, textReplyName));
+            }
+            else
+            {
+                //Instantiate the remaining sets of prefabs and disable
+                //The message
+                GameObject textReplyMessage = Instantiate(textReplyMessagePrefab, replyMessageBox.transform);
+                GameObject textReplyMessageName = Instantiate(textReplyMessageNamePrefab, replyMessageBox.transform);
+                //The reply itself
+                GameObject textReply = Instantiate(textReplyPrefab, replyBox.transform);
+                GameObject textReplyName = Instantiate(textReplyNamePrefab, replyBox.transform);
+
+                //Set the text
+                TextMeshProUGUI textReplyMessageUI = textReplyMessage.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyMessageNameUI = textReplyMessageName.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyUI = textReply.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI textReplyNameUI = textReplyName.GetComponent<TextMeshProUGUI>();
+
+                Message message = await GetMessageFromReply(repliesReceived[i].MessageId);
+
+                textReplyMessageUI.text = message.TextMessage;
+                textReplyMessageNameUI.text = $"Groetjes, \n {message.Name}";
+                textReplyUI.text = repliesReceived[i].TextMessage;
+                textReplyNameUI.text = $"Veel sterke, \n {repliesReceived[i].Name}";
+
+                //Disable them and add to list
+                textReplyMessage.SetActive(false);
+                textReplyMessageName.SetActive(false);
+                textReply.SetActive(false);
+                textReplyName.SetActive(false);
+                setsOfRepliesAndMessages.Add((textReplyMessage, textReplyMessageName, textReply, textReplyName));
+            }
+        }
+    }
+
+    async Task<Message> GetMessageFromReply(string messageId)
+    {
+        Message messageToReturn = null;
+
+        await firestore.Collection("messages").Document(messageId).GetSnapshotAsync().ContinueWith((task) => 
+        {
+            DocumentSnapshot snapshot = task.Result;
+            if(snapshot.Exists)
+            {
+                string name = "";
+                string textMessage = "";
+                string timestamp = "";
+                string messageFromId = "";
+                List<object> objectMessageToIds = new List<object>();
+                List<string> messageToIds = new List<string>();
+
+                Dictionary<string, object> message = new Dictionary<string, object>();
+                message = snapshot.ToDictionary();
+
+                foreach (KeyValuePair<string, object> pair in message)
+                {
+                    if (pair.Key == "name")
+                    {
+                        name = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "text")
+                    {
+                        textMessage = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "timestamp")
+                    {
+                        timestamp = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "from")
+                    {
+                        messageFromId = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "to")
+                    {
+                        objectMessageToIds = (List<object>)pair.Value;
+                    }
+                }
+
+                foreach (var objectMessageToId in objectMessageToIds)
+                {
+                    messageToIds.Add(objectMessageToId.ToString());
+                }
+
+                if(name != "" && textMessage != "" && timestamp != "" && messageFromId != "")
+                {
+                    timestamp = timestamp.Substring(11, 10) + " " + timestamp.Substring(22, 8);
+                    DateTime dateTimeTimeStamp = DateTime.Parse(timestamp);
+                    //Add two hours because of UTC+2
+                    dateTimeTimeStamp = dateTimeTimeStamp.AddHours(2);
+
+                    messageToReturn = new Message(messageId, messageFromId, messageToIds, name, textMessage, dateTimeTimeStamp);
+                }
+            }
+            else
+            {
+                Debug.Log("Message from reply doesnt exist!");
+            }
+        });
+
+        return messageToReturn;
+    }
+
+    public async void ReadReply()
+    {
+        var replyRead = new
+        {
+            read = true
+        };
+
+        await firestore.Collection("replies").Document(repliesReceived[0].Id).SetAsync(replyRead, SetOptions.MergeAll).ContinueWith((task) => 
+        {
+            Debug.Log("Reply updated to read = true");
+        });
+
+        //Remove the text message prefabs from the scene
+        (GameObject textReplyMessage, GameObject textReplyMessageName, GameObject textReply, GameObject textReplyName) = setsOfRepliesAndMessages[0];
+        Destroy(textReplyMessage);
+        Destroy(textReplyMessageName);
+        Destroy(textReply);
+        Destroy(textReplyName);
+
+        //Remove the first set of messages and enable the next ones if they exist or close the screen
+        setsOfRepliesAndMessages.RemoveAt(0);
+        repliesReceived.RemoveAt(0);
+
+        if(setsOfRepliesAndMessages.Count > 0) 
+        {
+            (GameObject nextTextReplyMessage, GameObject nextTextReplyMessageName, GameObject nextTextReply, GameObject nextTextReplyName) = setsOfRepliesAndMessages[0];
+            nextTextReplyMessage.SetActive(true);
+            nextTextReplyMessageName.SetActive(true);
+            nextTextReply.SetActive(true);
+            nextTextReplyName.SetActive(true);
+        }
+        else
+        {
+            panelReply.SetActive(false);
+            openRepliesButton.interactable = false;
+        }
     }
 
     void DisplayMessagesListener()
@@ -177,11 +485,11 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
-    Task GetActiveUsers(List<(string, string)> allUserIds, List<UserWithMessageInfo> activeUsers)
+    async Task GetActiveUsers(List<(string, string)> allUserIds, List<UserWithMessageInfo> activeUsers)
     {
         //query to get all the user ids of existing users
         Query allUserIdsQuery = firestore.Collection("users");
-        return allUserIdsQuery.GetSnapshotAsync().ContinueWith(task =>
+        await allUserIdsQuery.GetSnapshotAsync().ContinueWith(async task =>
         {
             QuerySnapshot allUserIdsQuerySnapshot = task.Result;
             foreach (DocumentSnapshot documentSnapshot in allUserIdsQuerySnapshot)
@@ -192,6 +500,7 @@ public class MessageHandling : MonoBehaviour
                     bool isActive = false;
                     string lastTimeLoggedIn = "";
                     string lastTimeMessageReceived = "";
+                    string lastTimeMessageSent = "";
                     string messagesReceivedPerDay = "";
 
                     Dictionary<string, object> user = documentSnapshot.ToDictionary();
@@ -214,22 +523,28 @@ public class MessageHandling : MonoBehaviour
                         {
                             lastTimeMessageReceived = pair.Value.ToString();
                         }
+                        else if (pair.Key == "lastTimeMessageSent")
+                        {
+                            lastTimeMessageSent = pair.Value.ToString();
+                        }
                         else if (pair.Key == "messagesReceivedPerDay")
                         {
                             messagesReceivedPerDay = pair.Value.ToString();
                         }
                     }
 
-                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
+                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && lastTimeMessageSent != "" && messagesReceivedPerDay != "")
                     {
                         lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
                         lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
+                        lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
 
-                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), int.Parse(messagesReceivedPerDay));
+                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), DateTime.Parse(lastTimeMessageSent), int.Parse(messagesReceivedPerDay));
 
                         //Add 2 hours because DateTime in db is UTC+2
                         userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
                         userWithMessageInfo.LastTimeMessageReceived = userWithMessageInfo.LastTimeMessageReceived.AddHours(2);
+                        userWithMessageInfo.LastTimeMessageSent = userWithMessageInfo.LastTimeMessageSent.AddHours(2);
 
                         //If the last message was received a day or more ago, reset the messagesReceivedPerDay to 0
                         DateTime currentDateTime = DateTime.Now;
@@ -254,7 +569,7 @@ public class MessageHandling : MonoBehaviour
                                 {"isActive", userWithMessageInfo.IsActive}
                             };
 
-                            firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
+                            await firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
                             {
                                 Debug.Log($"Updated user is active data for {userWithMessageInfo.Name}!");
                             });
@@ -268,7 +583,7 @@ public class MessageHandling : MonoBehaviour
                                 {"isActive", userWithMessageInfo.IsActive}
                             };
 
-                            firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
+                            await firestore.Collection("users").Document(documentSnapshot.Id).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
                             {
                                 Debug.Log($"Updated user is active data for {userWithMessageInfo.Name}!");
                             });
@@ -286,7 +601,7 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
-    async Task<string> GetUserNameOfSender(string id)
+    async Task<string> GetUserNameFromUserId(string id)
     {
         string userName = "";
 
@@ -328,7 +643,7 @@ public class MessageHandling : MonoBehaviour
         }
 
         //Getting the name of the user that sent the message
-        userNameOfSender = await GetUserNameOfSender(userId);
+        userNameOfSender = await GetUserNameFromUserId(userId);
 
         //Algorithm to send message to players
 
@@ -357,47 +672,58 @@ public class MessageHandling : MonoBehaviour
             }
         }
 
-        //Only send message to players if there are players with 2 or less messages received
-        while (messagesSent < messagesToSend)
-        {
-            if (leastMessagesReceived < maxMessagesReceived)
-            {
-                foreach (var userWithMessageInfo in activeUsers)
-                {
-                    bool userFound = false;
+        Debug.Log($"Least messages received by a user is: {leastMessagesReceived}");
 
-                    if (userWithMessageInfo.MessagesReceivedPerDay == leastMessagesReceived)
+        //Only send message to players if there are players with 2 or less messages received
+        /* while (messagesSent < messagesToSend)
+         {*/
+        while (leastMessagesReceived < maxMessagesReceived)
+        {
+            foreach (var userWithMessageInfo in activeUsers)
+            {
+                //bool userFound = false;
+
+                if (userWithMessageInfo.MessagesReceivedPerDay == leastMessagesReceived && messagesSent < messagesToSend)
+                {
+                    //add id to user from allUserIds
+                    for (int i = 0; i < allUserIds.Count; i++)
                     {
-                        //add id to user from allUserIds
-                        for (int i = 0; i < allUserIds.Count; i++)
+                        (string userId, string nameOfUser) = allUserIds[i];
+                        if (nameOfUser.Equals(userWithMessageInfo.Name) == true && usersToSendMessagesTo.Contains((userId, userWithMessageInfo)) == false)
                         {
-                            (string userId, string nameOfUser) = allUserIds[i];
-                            if (nameOfUser.Equals(userWithMessageInfo.Name) == true && usersToSendMessagesTo.Contains((userId, userWithMessageInfo)) == false)
-                            {
-                                usersToSendMessagesTo.Add((userId, userWithMessageInfo));
-                                messagesSent++;
-                                userFound = true;
-                                break;
-                            }
+                            usersToSendMessagesTo.Add((userId, userWithMessageInfo));
+                            messagesSent++;
+                            //userFound = true;
+                            break;
                         }
                     }
 
-                    if(userFound == true)
+                    /*if (userFound == true)
                     {
                         break;
-                    }
+                    }*/
                 }
-
-                //If the value is lower than 3, it will keep adding until it finds something or break
-                leastMessagesReceived++;
+                else if (messagesSent == messagesToSend)
+                {
+                    break;
+                }
             }
-            else
+
+            if (messagesSent == messagesToSend)
             {
                 break;
             }
-        }
 
-        for(int i = 0; i < usersToSendMessagesTo.Count; i++)
+            //If the value is lower than 3, it will keep adding until it finds something or break
+            leastMessagesReceived++;
+        }
+        /*else
+        {
+            break;
+        }*/
+        //}
+
+        for (int i = 0; i < usersToSendMessagesTo.Count; i++)
         {
             (string userId, UserWithMessageInfo userWithMessageInfo) = usersToSendMessagesTo[i];
             Debug.Log($"User to send message to: {userWithMessageInfo.Name}");
@@ -440,9 +766,19 @@ public class MessageHandling : MonoBehaviour
                 text = "Let's see if it works",
                 timestamp = FieldValue.ServerTimestamp,
                 from = userId,
-                to = userIdsToSendMessagesTo,
-                repliedBy = ""
+                to = userIdsToSendMessagesTo
             };
+
+            Dictionary<string, object> updateLastTimeMessageSent = new Dictionary<string, object>
+            {
+                {"lastTimeMessageSent", FieldValue.ServerTimestamp}
+            };
+
+            //Updating the time that the user sent the last message
+            await firestore.Collection("users").Document(userId).SetAsync(updateLastTimeMessageSent, SetOptions.MergeAll).ContinueWith((task) => 
+            {
+                Debug.Log("Updated last time this user sent a message!");
+            });
 
             await firestore.Collection("messages").AddAsync(message).ContinueWith(task =>
             {
@@ -452,6 +788,11 @@ public class MessageHandling : MonoBehaviour
             //Playing animation for sending a message
             messageObject.SetActive(true);
             messageAnimator.SetTrigger("MessageCreated");
+
+            //Disabling the send message button since the limit is to send one message per day
+            sendMessageButton.interactable = false;
+            //Inform the player that he has already sent a message today!
+            cantSendMessageText.SetActive(true);
 
             return true;
         }
@@ -472,7 +813,7 @@ public class MessageHandling : MonoBehaviour
     //This should be used in Start()
     async Task WaitAndCreateUIMessages()
     {
-        await DisplayMessages();
+        await GetMessagesForCurrentUser();
         textMessagesCounter.text = $"You have {messages.Count} new messages";
 
         //Create prefabs of text message and text message name for each message in the messages array
@@ -518,28 +859,137 @@ public class MessageHandling : MonoBehaviour
         }
     }
 
-    public void ReplyToMessageOnClick()
+    public async void ReplyToMessageOnClick()
     {
-        //SEND REPLY
+        TextMeshProUGUI replyLabelText = replyLabel.GetComponent<TextMeshProUGUI>();
+        string replyText = replyLabelText.text;
+        string userNameOfSender = await GetUserNameFromUserId(userId);
+
+        var reply = new 
+        { 
+            messageId = messages[0].Id,
+            name = userNameOfSender,
+            from = userId,
+            to = messages[0].From,
+            text = replyText,
+            read = false,
+            timestamp = FieldValue.ServerTimestamp
+        };
+
+        await firestore.Collection("replies").AddAsync(reply).ContinueWith(task => 
+        {
+            Debug.Log($"Reply added! Reply id: {task.Result.Id}");
+        });
 
         //Remove the text message prefabs from the scene
-        (GameObject textMessageToRemove, GameObject textMessageNameToRemove) = setsOfMessages[0];
-        Destroy(textMessageToRemove);
-        Destroy(textMessageNameToRemove);
+        (GameObject textMessage, GameObject textMessageName) = setsOfMessages[0];
+        Destroy(textMessage);
+        Destroy(textMessageName);
 
         //Remove the first set of messages and enable the next ones if they exist or close the screen
         setsOfMessages.RemoveAt(0);
         messages.RemoveAt(0);
 
-        if(setsOfMessages.Count> 0) 
+        if(setsOfMessages.Count > 0) 
         {
-            (GameObject textMessage, GameObject textMessageName) = setsOfMessages[0];
-            textMessage.SetActive(true);
-            textMessageName.SetActive(true);
+            (GameObject nextTextMessage, GameObject nextTextMessageName) = setsOfMessages[0];
+            nextTextMessage.SetActive(true);
+            nextTextMessageName.SetActive(true);
         }
         else
         {
             panelResponse.SetActive(false);
+            openMessagesButton.interactable = false;
+        }
+    }
+
+    async Task DisableSendMessageButtonIfUserSentMessage()
+    {
+        await firestore.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread((task) => 
+        {
+            DocumentSnapshot documentSnapshot = task.Result;
+            if (documentSnapshot.Exists == true)
+            {
+                string name = "";
+                bool isActive = false;
+                string lastTimeLoggedIn = "";
+                string lastTimeMessageReceived = "";
+                string lastTimeMessageSent = "";
+                string messagesReceivedPerDay = "";
+
+                Dictionary<string, object> user = documentSnapshot.ToDictionary();
+                foreach (KeyValuePair<string, object> pair in user)
+                {
+                    if (pair.Key == "Name")
+                    {
+                        name = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "isActive")
+                    {
+                        isActive = (bool)pair.Value;
+                    }
+                    else if (pair.Key == "lastTimeLoggedIn")
+                    {
+                        lastTimeLoggedIn = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "lastTimeMessageReceived")
+                    {
+                        lastTimeMessageReceived = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "lastTimeMessageSent")
+                    {
+                        lastTimeMessageSent = pair.Value.ToString();
+                    }
+                    else if (pair.Key == "messagesReceivedPerDay")
+                    {
+                        messagesReceivedPerDay = pair.Value.ToString();
+                    }
+                }
+
+                if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && lastTimeMessageSent != "" && messagesReceivedPerDay != "")
+                {
+                    lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
+                    lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
+                    lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
+
+                    UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), DateTime.Parse(lastTimeMessageSent), int.Parse(messagesReceivedPerDay));
+
+                    //Add 2 hours because DateTime in db is UTC+2
+                    userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
+                    userWithMessageInfo.LastTimeMessageReceived = userWithMessageInfo.LastTimeMessageReceived.AddHours(2);
+                    userWithMessageInfo.LastTimeMessageSent = userWithMessageInfo.LastTimeMessageSent.AddHours(2);
+
+                    DateTime currentDateTime = DateTime.Now;
+                    if(currentDateTime.Date <= userWithMessageInfo.LastTimeMessageSent.Date)
+                    {
+                        sendMessageButton.interactable = false;
+
+                        //Inform the player that he has already sent a message today!
+                        cantSendMessageText.SetActive(true);
+                    }
+                }
+            }
+        });
+    }
+
+    async Task WaitForTasksBeforeStart()
+    {
+        await DisableSendMessageButtonIfUserSentMessage();
+        await WaitAndCreateUIMessages();
+        await WaitAndCreateUnreadReplies();
+
+        //set number of messages and number of replies
+        numberOfNewMessages = messages.Count;
+        numberOfNewReplies = repliesReceived.Count;
+
+        //block the buttons if there are no new messages or replies
+        if (numberOfNewMessages == 0)
+        {
+            openMessagesButton.interactable = false;
+        }
+        if (numberOfNewReplies == 0)
+        {
+            openRepliesButton.interactable = false;
         }
     }
 
@@ -551,7 +1001,7 @@ public class MessageHandling : MonoBehaviour
         userId = userHandling.GetIdFromFile(filePath);
         messageAnimator = messageObject.GetComponent<Animator>();
 
-        await WaitAndCreateUIMessages();
+        await WaitForTasksBeforeStart();
         //textMessagesCounter.text = $"You have {messages.Count} new messages";
         Debug.Log($"Messages array size is: {messages.Count}");
         foreach (var message in messages)
@@ -569,5 +1019,6 @@ public class MessageHandling : MonoBehaviour
     void Update()
     {
         textMessagesCounter.text = $"You have {messages.Count} new messages";
+        textRepliesCounter.text = $"You have {repliesReceived.Count} new replies";
     }
 }

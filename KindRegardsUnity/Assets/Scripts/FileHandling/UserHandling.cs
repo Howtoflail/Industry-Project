@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class UserHandling : MonoBehaviour
@@ -105,10 +106,10 @@ public class UserHandling : MonoBehaviour
         Debug.Log("User id: " + userId);
     }
 
-    void UpdatePlayersActivity()
+    async Task UpdatePlayersActivity()
     {
         Query allUsersQuery = firestore.Collection("users");
-        allUsersQuery.GetSnapshotAsync().ContinueWith(task =>
+        await allUsersQuery.GetSnapshotAsync().ContinueWith(async task =>
         {
             QuerySnapshot allUsersQuerySnapshot = task.Result;
             foreach(DocumentSnapshot documentSnapshot in allUsersQuerySnapshot) 
@@ -118,12 +119,11 @@ public class UserHandling : MonoBehaviour
                 {
                     Dictionary<string, object> updates = new Dictionary<string, object>
                         {
-                            {"messagesReceivedPerDay", 0},
-                            {"lastTimeMessageReceived", FieldValue.ServerTimestamp }
+                            {"lastTimeMessageSent", FieldValue.ServerTimestamp}
                         };
 
                     DocumentReference userDocReference = documentSnapshot.Reference;
-                    userDocReference.SetAsync(updates, SetOptions.MergeAll).ContinueWith(task =>
+                    await userDocReference.SetAsync(updates, SetOptions.MergeAll).ContinueWith(task =>
                     {
                         Debug.Log("Updates are created!");
                     });
@@ -137,7 +137,7 @@ public class UserHandling : MonoBehaviour
         firestore = FirebaseFirestore.DefaultInstance;
 
         userId = GetIdFromFile(filePath);
-
+        
         //Query the id found in file to make sure it exists on db or create new one and store it on db
         if (userId == "")
         {
@@ -146,10 +146,10 @@ public class UserHandling : MonoBehaviour
             var user = new
             {
                 //user name should be retrieved from player input
-                Name = "Tribal",
+                Name = "Jeremiah",
                 isActive = true,
                 lastTimeLoggedIn = FieldValue.ServerTimestamp,
-                lastTimeMessagedReceived = FieldValue.ServerTimestamp,
+                lastTimeMessageReceived = FieldValue.ServerTimestamp,
                 messagesReceivedPerDay = 0
             };
 
@@ -172,6 +172,7 @@ public class UserHandling : MonoBehaviour
                     bool isActive = false;
                     string lastTimeLoggedIn = "";
                     string lastTimeMessageReceived = "";
+                    string lastTimeMessageSent = "";
                     string messagesReceivedPerDay = "";
 
                     Dictionary<string, object> user = snapshot.ToDictionary();
@@ -194,18 +195,23 @@ public class UserHandling : MonoBehaviour
                         {
                             lastTimeMessageReceived = pair.Value.ToString();
                         }
+                        else if (pair.Key == "lastTimeMessageSent")
+                        {
+                            lastTimeMessageSent = pair.Value.ToString();
+                        }
                         else if (pair.Key == "messagesReceivedPerDay")
                         {
                             messagesReceivedPerDay = pair.Value.ToString();
                         }
                     }
 
-                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
+                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && lastTimeMessageSent != "" && messagesReceivedPerDay != "")
                     {
                         lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
                         lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
+                        lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
 
-                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), int.Parse(messagesReceivedPerDay));
+                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), DateTime.Parse(lastTimeMessageSent), int.Parse(messagesReceivedPerDay));
 
                         //Add 2 hours because DateTime in db is UTC+2
                         userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
