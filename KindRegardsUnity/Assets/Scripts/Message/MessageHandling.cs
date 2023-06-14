@@ -910,6 +910,7 @@ public class MessageHandling : MonoBehaviour
             DocumentSnapshot documentSnapshot = task.Result;
             if (documentSnapshot.Exists == true)
             {
+                //RECREATE ERROR BY PUTTING `string lastTimeLoggedIn = "";` after `bool isActive = false;`
                 string name = "";
                 bool isActive = false;
                 string lastTimeLoggedIn = "";
@@ -974,6 +975,11 @@ public class MessageHandling : MonoBehaviour
 
     async Task WaitForTasksBeforeStart()
     {
+        //First of all wait for the user to be handled
+        await userHandling.CheckIfUserExistsFromUserIdOrUniqueId(firestore);
+        userId = userHandling.GetIdFromFile(filePath);
+        Debug.Log($"Debugging user id from message handling: {userId}");
+
         await DisableSendMessageButtonIfUserSentMessage();
         await WaitAndCreateUIMessages();
         await WaitAndCreateUnreadReplies();
@@ -991,6 +997,8 @@ public class MessageHandling : MonoBehaviour
         {
             openRepliesButton.interactable = false;
         }
+
+        //return Task.CompletedTask;
     }
 
     // Start is called before the first frame update
@@ -998,11 +1006,11 @@ public class MessageHandling : MonoBehaviour
     {
         userHandling = gameObject.GetComponent<UserHandling>();
         firestore = FirebaseFirestore.DefaultInstance;
-        userId = userHandling.GetIdFromFile(filePath);
         messageAnimator = messageObject.GetComponent<Animator>();
+        //userId = userHandling.GetIdFromFile(filePath);
 
         await WaitForTasksBeforeStart();
-        //textMessagesCounter.text = $"You have {messages.Count} new messages";
+        
         Debug.Log($"Messages array size is: {messages.Count}");
         foreach (var message in messages)
         {

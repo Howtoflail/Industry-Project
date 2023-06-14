@@ -10,11 +10,12 @@ using UnityEngine;
 
 public class UserHandling : MonoBehaviour
 {
-    private string filePath = @"User.bin";
+    private string filePathUser = @"User.bin";
     private string userId;
+    private string uniqueId;
+    private Task sendMessageTask;
 
     private FirestoreManager firestoreManager;
-    private FirebaseFirestore firestore;
 
     //When a user is first created, the user will have a field lastTimeLoggedIn
     //which will be the DateTime of when the user plays the game for the first time
@@ -23,8 +24,6 @@ public class UserHandling : MonoBehaviour
     //So when querying the id of the user to find whether the user exists or not
     //the field will be updated with the time he logged in
     //
-    //A background Android service will run every 48 hours to check if the lastTimeLoggedIn
-    //was less than 48 hours ago
     //If the lastTimeLoggedIn was 48 hours ago or more the user will be marked as inactive in the database
 
     public string GetIdFromFile(string filePath)
@@ -40,14 +39,14 @@ public class UserHandling : MonoBehaviour
                 
     }
 
-    private string ReadIdBinary()
+    string ReadIdBinary()
     {
         FileStream fileStream = null;
         BinaryFormatter binaryFormatter = null;
 
         try
         {
-            fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            fileStream = new FileStream(filePathUser, FileMode.Open, FileAccess.Read);
             binaryFormatter = new BinaryFormatter();
 
             return binaryFormatter.Deserialize(fileStream).ToString();
@@ -63,14 +62,14 @@ public class UserHandling : MonoBehaviour
         }
     }
 
-    private void SaveIdInBinary(string id)
+    void SaveIdInBinary(string id)
     {
         FileStream fileStream = null;
         BinaryFormatter binaryFormatter = null;
 
         try
         {
-            fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
+            fileStream = new FileStream(filePathUser, FileMode.OpenOrCreate, FileAccess.Write);
             binaryFormatter = new BinaryFormatter();
 
             binaryFormatter.Serialize(fileStream, id);
@@ -82,6 +81,14 @@ public class UserHandling : MonoBehaviour
         finally
         {
             fileStream?.Close();
+        }
+    }
+
+    void RemoveFile(string filePath)
+    {
+        if(File.Exists(filePath)) 
+        {
+            File.Delete(filePath);
         }
     }
 
@@ -108,6 +115,7 @@ public class UserHandling : MonoBehaviour
 
     async Task UpdatePlayersActivity()
     {
+        FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
         Query allUsersQuery = firestore.Collection("users");
         await allUsersQuery.GetSnapshotAsync().ContinueWith(async task =>
         {
@@ -132,112 +140,213 @@ public class UserHandling : MonoBehaviour
         });
     }
 
-    void Start()
+    public async Task CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestore)
     {
-        firestore = FirebaseFirestore.DefaultInstance;
+        userId = GetIdFromFile(filePathUser);
 
-        userId = GetIdFromFile(filePath);
-        
-        //Query the id found in file to make sure it exists on db or create new one and store it on db
-        if (userId == "")
+        //Getting the unique id of the user based on device
+        #if UNITY_IOS
+            uniqueId = Device.vendorIdentifier;
+        #else
+            uniqueId = SystemInfo.deviceUniqueIdentifier;
+        #endif
+        Debug.Log($"Unique id is: {uniqueId}");
+
+        //Checking if a user exists with the current unique id
+        if (userId != "")
         {
-            //Redirect to character creation
+            bool searchForUser = false;
+            bool userFound = false;
+            bool snapshotExists = false;
 
-            var user = new
-            {
-                //user name should be retrieved from player input
-                Name = "Jeremiah",
-                isActive = true,
-                lastTimeLoggedIn = FieldValue.ServerTimestamp,
-                lastTimeMessageReceived = FieldValue.ServerTimestamp,
-                messagesReceivedPerDay = 0
-            };
-
-            firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
-            {
-                Debug.Log($"Newly generated user id is {task.Result.Id}");
-                SaveIdInBinary(task.Result.Id);
-            });
-        }
-        else
-        {
-            firestore.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
+            await firestore.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread((task) => 
             {
                 DocumentSnapshot snapshot = task.Result;
                 if (snapshot.Exists == true)
                 {
+                    snapshotExists = true;
                     Debug.Log($"Document {snapshot.Id} found");
+                }
+                else
+                {
+                    //Search for user in all users in case the User.bin file has the wrong id
+                    Debug.Log("Document doesn't exist!");
+                    searchForUser = true;
+                }
+            });
 
+            if (snapshotExists == true)
+            {
+                Dictionary<string, object> updates = new Dictionary<string, object>
+                    {
+                        {"lastTimeLoggedIn", FieldValue.ServerTimestamp},
+                        {"uniqueId", uniqueId}
+                    };
+
+                await firestore.Collection("users").Document(userId).SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread((task) =>
+                {
+                    Debug.Log($"Updated user last time logged in data!");
+                });
+            }
+
+            if (searchForUser == true)
+            {
+                await firestore.Collection("users").GetSnapshotAsync().ContinueWithOnMainThread((task) => 
+                {
+                    QuerySnapshot userSnapshots = task.Result;
+                    foreach(DocumentSnapshot documentSnapshot in userSnapshots) 
+                    {
+                        string uniqueIdFromDb = "";
+                        string newUserId = documentSnapshot.Id;
+                        string name = "";
+
+                        Dictionary<string, object> user = documentSnapshot.ToDictionary();
+                        foreach (KeyValuePair<string, object> pair in user)
+                        {
+                            if(pair.Key == "Name")
+                            {
+                                name = pair.Value.ToString();
+                            }
+                            else if(pair.Key == "uniqueId")
+                            {
+                                uniqueIdFromDb = pair.Value.ToString();
+                                break;
+                            }
+                        }
+
+                        if(uniqueId.Equals(uniqueIdFromDb))
+                        {
+                            Debug.Log($"The user id from the User.bin file was incorrect! User name: {name}");
+
+                            //Add the correct user id to the User.bin file
+                            userId = newUserId;
+                            //Remove the existing file and create the new one with the correct user id
+                            RemoveFile(filePathUser);
+                            SaveIdInBinary(userId);
+                            userFound = true;
+                            break;
+                        }
+                    }
+                });
+
+                //If user was not found, redirect to character creation
+                if (userFound == false)
+                {
+                    var user = new
+                    {
+                        //user name should be retrieved from player input
+                        Name = "Kalkstein",
+                        isActive = true,
+                        lastTimeLoggedIn = FieldValue.ServerTimestamp,
+                        lastTimeMessageReceived = FieldValue.ServerTimestamp,
+                        messagesReceivedPerDay = 0,
+                        uniqueId = uniqueId
+                    };
+
+                    await firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
+                    {
+                        Debug.Log($"Newly generated user id is {task.Result.Id}");
+                        SaveIdInBinary(task.Result.Id);
+                        userId = task.Result.Id;
+                    });
+                }
+                else
+                {
+                    //If user was found update his last time logged in time
+                    Dictionary<string, object> update = new Dictionary<string, object>
+                    {
+                        {"lastTimeLoggedIn", FieldValue.ServerTimestamp}
+                    };
+
+                    await firestore.Collection("users").Document(userId).SetAsync(update, SetOptions.MergeAll).ContinueWithOnMainThread((task) =>
+                    {
+                        Debug.Log($"Updated user last time logged in data!");
+                    });
+                }
+            }
+        }
+        else
+        {
+            //Check if the user already exists based on the unique id
+            //If not, prompt to user creation
+            bool userFound = false;
+
+            await firestore.Collection("users").GetSnapshotAsync().ContinueWithOnMainThread((task) =>
+            {
+                QuerySnapshot userSnapshots = task.Result;
+                foreach (DocumentSnapshot documentSnapshot in userSnapshots)
+                {
+                    string uniqueIdFromDb = "";
+                    string newUserId = documentSnapshot.Id;
                     string name = "";
-                    bool isActive = false;
-                    string lastTimeLoggedIn = "";
-                    string lastTimeMessageReceived = "";
-                    string lastTimeMessageSent = "";
-                    string messagesReceivedPerDay = "";
 
-                    Dictionary<string, object> user = snapshot.ToDictionary();
-                    foreach(KeyValuePair<string, object> pair in user)
+                    Dictionary<string, object> user = documentSnapshot.ToDictionary();
+                    foreach (KeyValuePair<string, object> pair in user)
                     {
                         if (pair.Key == "Name")
                         {
                             name = pair.Value.ToString();
-                            Debug.Log($"User name found: {name}");
                         }
-                        else if (pair.Key == "isActive")
+                        else if (pair.Key == "uniqueId")
                         {
-                            isActive = (bool)pair.Value;
-                        }
-                        else if (pair.Key == "lastTimeLoggedIn")
-                        {
-                            lastTimeLoggedIn = pair.Value.ToString();
-                        }
-                        else if (pair.Key == "lastTimeMessageReceived")
-                        {
-                            lastTimeMessageReceived = pair.Value.ToString();
-                        }
-                        else if (pair.Key == "lastTimeMessageSent")
-                        {
-                            lastTimeMessageSent = pair.Value.ToString();
-                        }
-                        else if (pair.Key == "messagesReceivedPerDay")
-                        {
-                            messagesReceivedPerDay = pair.Value.ToString();
+                            uniqueIdFromDb = pair.Value.ToString();
+                            break;
                         }
                     }
 
-                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && lastTimeMessageSent != "" && messagesReceivedPerDay != "")
+                    if (uniqueId.Equals(uniqueIdFromDb))
                     {
-                        lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
-                        lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
-                        lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
+                        Debug.Log($"User didn't have User.bin file but was found! User name: {name}");
 
-                        UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), DateTime.Parse(lastTimeMessageSent), int.Parse(messagesReceivedPerDay));
-
-                        //Add 2 hours because DateTime in db is UTC+2
-                        userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
-                        userWithMessageInfo.LastTimeMessageReceived = userWithMessageInfo.LastTimeMessageReceived.AddHours(2);
-
-                        //Update last time logged in for the user that logged in
-                        userWithMessageInfo.LastTimeLoggedInTimeStamp = FieldValue.ServerTimestamp;
-
-                        Dictionary<string, object> update = new Dictionary<string, object>
-                        {
-                            {"lastTimeLoggedIn", userWithMessageInfo.LastTimeLoggedInTimeStamp}
-                        };
-
-                        firestore.Collection("users").Document(userId).SetAsync(update, SetOptions.MergeAll).ContinueWith((task) =>
-                        {
-                            Debug.Log($"Updated user last time logged in data!");
-                        });
+                        //Add the correct user id to the User.bin file
+                        userId = newUserId;
+                        SaveIdInBinary(userId);
+                        userFound = true;
+                        break;
                     }
-                }
-                else
-                {
-                    //Redirect to character creation
-                    Debug.Log("Document doesnt exist!");
                 }
             });
+
+            //If user was not found, redirect to character creation
+            if (userFound == false) 
+            {
+                var user = new
+                {
+                    //user name should be retrieved from player input
+                    Name = "Kalkstein",
+                    isActive = true,
+                    lastTimeLoggedIn = FieldValue.ServerTimestamp,
+                    lastTimeMessageReceived = FieldValue.ServerTimestamp,
+                    messagesReceivedPerDay = 0,
+                    uniqueId = uniqueId
+                };
+
+                await firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
+                {
+                    Debug.Log($"Newly generated user id is {task.Result.Id}");
+                    SaveIdInBinary(task.Result.Id);
+                    userId = task.Result.Id;
+                });
+            }
+            else
+            {
+                //If user was found update his last time logged in time
+                Dictionary<string, object> update = new Dictionary<string, object>
+                {
+                    {"lastTimeLoggedIn", FieldValue.ServerTimestamp}
+                };
+
+                await firestore.Collection("users").Document(userId).SetAsync(update, SetOptions.MergeAll).ContinueWithOnMainThread((task) =>
+                {
+                    Debug.Log($"Updated user last time logged in data!");
+                });
+            }
         }
+    }
+
+    void Start()
+    {
+        
     }
 
     void Update()
