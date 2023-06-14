@@ -4,15 +4,19 @@ using UnityEngine;
 using System.Linq;
 
 public class MailGameObstacles : MonoBehaviour
-{   
+{
     [SerializeField]
     private GameObject topObstacle;
+
     [SerializeField]
     private GameObject bottomObstacle;
+
     [SerializeField]
     private GameObject playerDetector;
+
     [SerializeField]
     private GameObject endPrefab;
+
     [SerializeField]
     private float obstacleSpawnPositionX;
 
@@ -30,6 +34,7 @@ public class MailGameObstacles : MonoBehaviour
 
     [SerializeField]
     private float destroyLocationX;
+
     [SerializeField]
     private int obstaclesBeforeEnd;
     private float nextSpawnTime;
@@ -53,7 +58,7 @@ public class MailGameObstacles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(obstaclesSpawned > obstaclesBeforeEnd)
+        if (obstaclesSpawned > obstaclesBeforeEnd)
         {
             spawnEnding = true;
         }
@@ -92,42 +97,34 @@ public class MailGameObstacles : MonoBehaviour
 
     private void SpawnEnding()
     {
-        if(!endSpawned)
+        if (!endSpawned)
         {
-        GameObject endObject = Instantiate(endPrefab, GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Win"));
-        endObject.transform.position = transform.position + new Vector3(obstacleSpawnPositionX, 0, 0);
-        endSpawned = true;
-        }        
+            GameObject endObject = Instantiate(
+                endPrefab,
+                GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Win")
+            );
+            endObject.transform.position =
+                transform.position + new Vector3(obstacleSpawnPositionX, 0, 0);
+            endSpawned = true;
+        }
     }
 
     private void SpawnObstacles()
     {
         nextSpawnTime += timeBetweenObstacles;
 
-        GameObject top = Instantiate(
-            topObstacle,
-            GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Obstacles")
-        );
-        GameObject bottom = Instantiate(
-            bottomObstacle,
-            GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Obstacles")
-        );
         GameObject detector = Instantiate(
             playerDetector,
             GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Detectors")
         );
 
-        obstacles.Add(top);
-        obstacles.Add(bottom);
         playerDetectors.Add(detector);
 
-        height = GenerateRandomHeight();
-        top.transform.position =
-            transform.position + new Vector3(obstacleSpawnPositionX, (height + gap), 0);
-        bottom.transform.position =
-            transform.position + new Vector3(obstacleSpawnPositionX, (height - gap), 0);
+        SpawnObstaclesBottom();
+        SpawnObstaclesTop();
+
         detector.transform.position =
-            transform.position + new Vector3(obstacleSpawnPositionX, (height), 0);
+            transform.position + new Vector3(obstacleSpawnPositionX, 0, 0);
 
         // top.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
         // bottom.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
@@ -138,6 +135,29 @@ public class MailGameObstacles : MonoBehaviour
     private float GenerateRandomHeight()
     {
         return Random.Range(minGapHeight, maxGapHeight);
+    }
+
+    private void SpawnObstaclesBottom()
+    {
+        GameObject bottom = Instantiate(
+            bottomObstacle,
+            GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Obstacles")
+        );
+        obstacles.Add(bottom);
+        bottom.transform.position =
+            transform.position + new Vector3(obstacleSpawnPositionX, -20, 0);
+    }
+
+    private void SpawnObstaclesTop()
+    {
+        height = GenerateRandomHeight();
+        GameObject top = Instantiate(
+            topObstacle,
+            GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Obstacles")
+        );
+        obstacles.Add(top);
+        top.transform.position =
+            transform.position + new Vector3(obstacleSpawnPositionX + Random.Range(-10f, 10f), (height + gap), 0);
     }
 
     public void StartSpawning()
