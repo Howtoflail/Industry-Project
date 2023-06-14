@@ -36,10 +36,12 @@ public class PetController : MonoBehaviour
     [SerializeField] public TextMeshProUGUI name;
     [SerializeField] public GameObject colourManager;
 	
-	private GameObject stickerRes = Resources.Load<GameObject>("Sticker");
+	private GameObject stickerRes;
 
     void Start()
     {
+		stickerRes = Resources.Load<GameObject>("Sticker");
+		
 		petInfo = GameObject.FindWithTag("PetInfo").GetComponent<PetInfo>();
         pets = GameObject.Find("Pets");
         states = Resources.FindObjectsOfTypeAll(typeof(PetState)); //gets all loaded scripts
@@ -93,7 +95,6 @@ public class PetController : MonoBehaviour
 		//User u = new User(user.Id, user.diary_code, p, user.computer_code);
 		//currentUser = u;
         Color c = stringToColor(petInfo.petColor);
-		print(c);
         colourManager.GetComponent<ColourPicker>().SetActualColour(c);
         ShowPetFinal();
         ui.Back();
@@ -103,11 +104,7 @@ public class PetController : MonoBehaviour
         try
         {
             string[] colors = colorString.Split(',');
-            foreach(string color in colors)
-            {
-                UnityEngine.Debug.Log(color);
-            }
-            return new Color(float.Parse(colors[0]), float.Parse(colors[1]), float.Parse(colors[2]), float.Parse(colors[3]));
+            return new Color(float.Parse(colors[0]), float.Parse(colors[1]), float.Parse(colors[2]));
         }
         catch
         {
@@ -116,7 +113,7 @@ public class PetController : MonoBehaviour
     }
     public static string colorToString(Color color)
     {
-        return color.r + "," + color.g + "," + color.b + "," + color.a;
+        return color.r + "," + color.g + "," + color.b;
     }
 
     private void ShowPet()
