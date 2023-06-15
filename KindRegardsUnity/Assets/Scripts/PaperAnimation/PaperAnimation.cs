@@ -41,7 +41,7 @@ public class PaperAnimation : MonoBehaviour
     {
         if (animationStarted == true && visibilityPercentage < 1f)
         {
-            Debug.Log($"Visibility percentage is: {visibilityPercentage}");
+            //Debug.Log($"Visibility percentage is: {visibilityPercentage}");
             visibilityPercentage = Time.time / (timeWhenStarted + timeToDisplayAnimation);
             material.SetFloat("_Visibility", visibilityPercentage);
         }
@@ -56,7 +56,7 @@ public class PaperAnimation : MonoBehaviour
         }
         if(animationReversedFinished == true && Time.time >= timeToWaitUntilStartingReverseAnimation) 
         {
-            Debug.Log($"Time when finished at start is: {timeToWaitUntilStartingReverseAnimation}");
+            //Debug.Log($"Time when finished at start is: {timeToWaitUntilStartingReverseAnimation}");
             visibilityPercentage = 1f - (Time.time / (timeToWaitUntilStartingReverseAnimation + timeToDisplayAnimationReversed));
             material.SetFloat("_Visibility", visibilityPercentage);
         }
