@@ -24,6 +24,7 @@ using System.IO;
 public class PetController : MonoBehaviour
 {
     private PetDTO petDTO;
+    [SerializeField]
     private UnityEngine.Object[] states;
     private GameObject pets;
     private UIController ui;
