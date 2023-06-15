@@ -10,7 +10,7 @@ public class PetColorPicker : MonoBehaviour
     private Color currentPetColor;
     void Start()
     {
-        
+        currentPetColor = Color.white;
     }
 
     // Update is called once per frame

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
@@ -66,6 +67,7 @@ public class MessageHandling : MonoBehaviour
     private Animator messageAnimator;
     private UserHandling userHandling;
     private FirebaseFirestore firestore;
+    public UnityEvent<string> userFoundOrCreateUser;
 
     //Messages in the db should have:
     //name
@@ -979,6 +981,7 @@ public class MessageHandling : MonoBehaviour
         await userHandling.CheckIfUserExistsFromUserIdOrUniqueId(firestore);
         userId = userHandling.GetIdFromFile(filePath);
         Debug.Log($"Debugging user id from message handling: {userId}");
+        userFoundOrCreateUser.Invoke(userId);
 
         await DisableSendMessageButtonIfUserSentMessage();
         await WaitAndCreateUIMessages();
@@ -997,8 +1000,6 @@ public class MessageHandling : MonoBehaviour
         {
             openRepliesButton.interactable = false;
         }
-
-        //return Task.CompletedTask;
     }
 
     // Start is called before the first frame update

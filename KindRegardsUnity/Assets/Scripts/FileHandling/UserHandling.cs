@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UserHandling : MonoBehaviour
 {
@@ -14,8 +16,23 @@ public class UserHandling : MonoBehaviour
     private string userId;
     private string uniqueId;
     private Task sendMessageTask;
+    private UIController uiController;
+
+    [SerializeField]
+    private GameObject characterCreationCanvas;
+    [SerializeField]
+    private GameObject uiControllerGameObject;
+    [SerializeField]
+    private Button acceptButton;
+    [SerializeField]
+    private GameObject textNameObject;
+    [SerializeField]
+    private GameObject petColorPickerObject;
+    [SerializeField]
+    private GameObject petControllerObject;
 
     private FirestoreManager firestoreManager;
+    private FirebaseFirestore firestore;
 
     //When a user is first created, the user will have a field lastTimeLoggedIn
     //which will be the DateTime of when the user plays the game for the first time
@@ -140,9 +157,11 @@ public class UserHandling : MonoBehaviour
         });
     }
 
-    public async Task CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestore)
+    public async Task CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestoreParam)
     {
         userId = GetIdFromFile(filePathUser);
+        uiController = uiControllerGameObject.GetComponent<UIController>();
+        firestore = firestoreParam;
 
         //Getting the unique id of the user based on device
         #if UNITY_IOS
@@ -232,7 +251,8 @@ public class UserHandling : MonoBehaviour
                 //If user was not found, redirect to character creation
                 if (userFound == false)
                 {
-                    var user = new
+                    CreateUser();
+                    /*var user = new
                     {
                         //user name should be retrieved from player input
                         Name = "Kalkstein",
@@ -248,7 +268,7 @@ public class UserHandling : MonoBehaviour
                         Debug.Log($"Newly generated user id is {task.Result.Id}");
                         SaveIdInBinary(task.Result.Id);
                         userId = task.Result.Id;
-                    });
+                    });*/
                 }
                 else
                 {
@@ -310,7 +330,8 @@ public class UserHandling : MonoBehaviour
             //If user was not found, redirect to character creation
             if (userFound == false) 
             {
-                var user = new
+                CreateUser();
+                /*var user = new
                 {
                     //user name should be retrieved from player input
                     Name = "Kalkstein",
@@ -326,7 +347,7 @@ public class UserHandling : MonoBehaviour
                     Debug.Log($"Newly generated user id is {task.Result.Id}");
                     SaveIdInBinary(task.Result.Id);
                     userId = task.Result.Id;
-                });
+                });*/
             }
             else
             {
@@ -342,6 +363,66 @@ public class UserHandling : MonoBehaviour
                 });
             }
         }
+    }
+
+    void CreateUser()
+    {
+        //Enable character creation canvas 
+        uiController.Forward(13);
+
+        //await OnAcceptButtonClick();
+    }
+
+    public async Task<bool> OnAcceptButtonClick()
+    {
+        bool ok = false;
+
+        TextMeshProUGUI textName = textNameObject.GetComponent<TextMeshProUGUI>();
+        PetColorPicker petColorPicker = petColorPickerObject.GetComponent<PetColorPicker>();
+        PetController petController = petControllerObject.GetComponent<PetController>();
+
+        string name = textName.text;
+        Color currentPetColor = petColorPicker.GetPetColor();
+        string petType = ((PetStateEnum)petController.petChoise).ToString();
+
+        var user = new
+        {
+            Name = name,
+            isActive = true,
+            lastTimeLoggedIn = FieldValue.ServerTimestamp,
+            lastTimeMessageReceived = FieldValue.ServerTimestamp,
+            messagesReceivedPerDay = 0,
+            uniqueId = uniqueId
+        };
+
+        string id = "";
+
+        await firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread((task) => 
+        {
+            Debug.Log($"User created: {task.Result.Id}");
+            id = task.Result.Id;
+            SaveIdInBinary(task.Result.Id);
+        });
+
+        if(id != "")
+        {
+            var pet = new
+            {
+                petColor = currentPetColor,
+                petType = petType
+            };
+
+            DocumentReference documentReference = firestore.Collection("pets").Document(id);
+            await documentReference.SetAsync(pet).ContinueWithOnMainThread((task) => 
+            {
+                Debug.Log("Pet created!");
+                ok = true;
+            });
+        }
+
+        uiController.Back();
+        //petController.Accept();
+        return ok;
     }
 
     void Start()

@@ -32,6 +32,7 @@ public class PetController : MonoBehaviour
 	private PetInfo petInfo;
     private User currentUser;
     private PetDTO currentPet;
+    private int _petChoise;
 
     [SerializeField]public GameObject canvas;
     [SerializeField] public TextMeshProUGUI name;
@@ -63,21 +64,20 @@ public class PetController : MonoBehaviour
 			UserFound();
 		}
 	}
-    
-	private int petChoise
-	{
-		get
-		{
-			Enum.TryParse(petInfo.petType, out PetStateEnum result);
-			return (int)result;
-		}
-		
-		set
-		{
-			var len = Enum.GetNames(typeof(PetStateEnum)).Length;
-			petInfo.petType = ((PetStateEnum)( (value % len + len) % len )).ToString(); //modulo operation that handles negatives
-		}
-	}
+
+    public int petChoise
+    {
+        get
+        {
+            return _petChoise;
+        }
+
+        set
+        {
+            var len = Enum.GetNames(typeof(PetStateEnum)).Length;
+            _petChoise = ((value % len + len) % len);
+        }
+    }
 
     private void UserNotFound()
     {
