@@ -21,7 +21,7 @@ public class PetInfo : MonoBehaviour
 		mgr.GetObject(this, result => {
 			if (result != null)
 			{
-				FirestoreDataTransferer.TransferTo(result as DocumentSnapshot, this);
+				//FirestoreDataTransferer.TransferTo(result as DocumentSnapshot, this);
 				print(petName);
 			}
 			
