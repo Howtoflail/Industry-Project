@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 9ebe7d68cebe4af4ea35b6f91951d10d
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Campton
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 60f48ec6ad2fd4a4da517adf9fe41827, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
