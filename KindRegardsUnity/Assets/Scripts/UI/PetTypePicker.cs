@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class PetTypePicker : MonoBehaviour
 {
@@ -15,9 +16,11 @@ public class PetTypePicker : MonoBehaviour
     [SerializeField]
     private Text typeText;
     private AudioSource audioSource;
+
+    PetInfo petInfo;
     void Start()
     {
-        
+        petInfo = GameObject.FindWithTag("PetInfo").GetComponent<PetInfo>();
     }
 
     // Update is called once per frame
@@ -28,18 +31,18 @@ public class PetTypePicker : MonoBehaviour
 
     public void UpdateTypeText()
     {
-        switch (petController.GetPetDTO().petKind)
+        switch (Enum.Parse(typeof(PetStateEnum), petInfo.petType))
         {
-            case 0:
+            case PetStateEnum.Rabbit:
             typeText.text = "Rabbit";
             break;
-            case 1:
+            case PetStateEnum.Owl:
             typeText.text = "Owl";
             break;
-            case 2:
+            case PetStateEnum.Cat:
             typeText.text = "Cat";
             break;
-            case 3:
+            case PetStateEnum.Dog:
             typeText.text = "Dog";
             break;
             default:
@@ -47,25 +50,21 @@ public class PetTypePicker : MonoBehaviour
             break;
         }
     }
-    public void PlayTypeSound()
-    {
-        switch (petController.GetPetDTO().petKind)
-        {
-            case 0:
-            typeText.text = "Rabbit";
-            break;
-            case 1:
-            typeText.text = "Owl";
-            break;
-            case 2:
-            typeText.text = "Cat";
-            break;
-            case 3:
-            typeText.text = "Dog";
-            break;
-            default:
-            typeText.text = "-";
-            break;
-        }
-    }
+    // public void PlayTypeSound()
+    // {
+    //     switch (Enum.Parse(typeof(PetStateEnum), petInfo.petType))
+    //     {
+    //         case PetStateEnum.Rabbit:
+    //         break;
+    //         case PetStateEnum.Owl:
+    //         break;
+    //         case PetStateEnum.Cat:
+    //         break;
+    //         case PetStateEnum.Dog:
+    //         break;
+    //         default:
+    //         typeText.text = "-";
+    //         break;
+    //     }
+    // }
 }

@@ -159,4 +159,9 @@ public class PetController : MonoBehaviour
 			mgr.SetObject(petInfo, id => {});
 		}
     }
+
+    public void SetColorCurrentPet(Color color)
+    {
+        colourManager.GetComponent<ColourPicker>().SetActualColour(color);
+    }
 }
