@@ -353,17 +353,4 @@ public class UserHandling : MonoBehaviour
     {
         
     }
-
-    /*firestoreManager = gameObject.GetComponent<FirestoreManager>();
-        DataExample data = gameObject.GetComponent<DataExample>();
-        data.name = "Martin";
-
-        if (firestoreManager.ready == false)
-        {
-            firestoreManager.onLoaded.AddListener(() => CreateUserOrLogin(data));
-        }
-        else
-        {
-            CreateUserOrLogin(data);
-        }*/
 }
