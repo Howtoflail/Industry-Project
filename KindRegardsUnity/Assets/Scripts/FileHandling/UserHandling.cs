@@ -391,8 +391,6 @@ public class UserHandling : MonoBehaviour
 		onLoad.Invoke();
         //Enable character creation canvas 
         uiController.Forward(13);
-
-        //await OnAcceptButtonClick();
     }
 
     public async void OnAcceptButtonClick()

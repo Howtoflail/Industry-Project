@@ -2,6 +2,7 @@ using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BezierFollow : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class BezierFollow : MonoBehaviour
 
     [SerializeField]
     private GameObject messageHandlingObject;
+
+    [SerializeField]
+    private GameObject[] uiElements;
 
     private MessageHandling messageHandling;
 
@@ -28,14 +32,42 @@ public class BezierFollow : MonoBehaviour
     [SerializeField]
     private float timeToWaitForSendingMessageAnimation = 6f;
 
+    private float timeWhenSentAnimationFinished = 0f;
+
+    private float timeWhenArriveAnimationFinished = 0f;
+
     void Start()
     {
         messageHandling = messageHandlingObject.GetComponent<MessageHandling>();
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
+
+        foreach(GameObject uiElement in uiElements) 
+        {
+            uiElement.SetActive(false);
+        }
     }
 
+    void Update()
+    {
+        if(timeWhenSentAnimationFinished != 0f) 
+        {
+            timeWhenSentAnimationFinished = 0f;
+            //load the mail game
+            SceneManager.LoadScene(1);
+        }
+
+        if(timeWhenArriveAnimationFinished != 0f)
+        {
+            timeWhenArriveAnimationFinished = 0f;
+            //Enable the buttons
+            foreach (GameObject uiElement in uiElements)
+            {
+                uiElement.SetActive(true);
+            }
+        }
+    }
 
     public void OnClickMove()
     {
@@ -43,7 +75,6 @@ public class BezierFollow : MonoBehaviour
         {
             routeToGo = Random.Range(0, 3); //This can return 0, 1 or 2
             StartCoroutine(GoByTheRoute(routeToGo));
-
         }
     }
 
@@ -107,6 +138,15 @@ public class BezierFollow : MonoBehaviour
         // }
 
         coroutineAllowed = true;
-
+        if(routeNumber == 3) 
+        {
+            timeWhenSentAnimationFinished = Time.time;
+            Debug.Log($"Time when animation finished: {timeWhenSentAnimationFinished}");
+        }
+        else
+        {
+            timeWhenArriveAnimationFinished = Time.time;
+            Debug.Log($"Time when animation finished: {timeWhenArriveAnimationFinished}");
+        }
     }
 }

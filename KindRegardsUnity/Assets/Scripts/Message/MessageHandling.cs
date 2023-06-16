@@ -914,7 +914,6 @@ public class MessageHandling : MonoBehaviour
             DocumentSnapshot documentSnapshot = task.Result;
             if (documentSnapshot.Exists == true)
             {
-                //RECREATE ERROR BY PUTTING `string lastTimeLoggedIn = "";` after `bool isActive = false;`
                 string name = "";
                 bool isActive = false;
                 string lastTimeLoggedIn = "";
