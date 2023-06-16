@@ -20,10 +20,12 @@ public class MessageHandling : MonoBehaviour
     private List<Reply> repliesReceived = new List<Reply>();
     private List<Reply> repliesSent = new List<Reply>();
     private List<(GameObject, GameObject, GameObject, GameObject)> setsOfRepliesAndMessages = new List<(GameObject, GameObject, GameObject, GameObject)>();
-    private string userId; 
     private bool ok = false;
     private int numberOfNewMessages = 0;
     private int numberOfNewReplies = 0;
+
+    private string userId;
+    public string UserId { get { return userId; } set { userId = value; } }
 
     [SerializeField]
     private Text textMessagesCounter;
@@ -262,7 +264,7 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
-    async Task WaitAndCreateUnreadReplies()
+    public async Task WaitAndCreateUnreadReplies()
     {
         textRepliesCounter.text = $"You have {repliesReceived.Count} new replies";
 
@@ -813,7 +815,7 @@ public class MessageHandling : MonoBehaviour
     }
 
     //This should be used in Start()
-    async Task WaitAndCreateUIMessages()
+    public async Task WaitAndCreateUIMessages()
     {
         await GetMessagesForCurrentUser();
         textMessagesCounter.text = $"You have {messages.Count} new messages";
@@ -905,7 +907,7 @@ public class MessageHandling : MonoBehaviour
         }
     }
 
-    async Task DisableSendMessageButtonIfUserSentMessage()
+    public async Task DisableSendMessageButtonIfUserSentMessage()
     {
         await firestore.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread((task) => 
         {
@@ -977,28 +979,39 @@ public class MessageHandling : MonoBehaviour
 
     async Task WaitForTasksBeforeStart()
     {
+        bool createUser = false;
+
         //First of all wait for the user to be handled
-        await userHandling.CheckIfUserExistsFromUserIdOrUniqueId(firestore);
-        userId = userHandling.GetIdFromFile(filePath);
-        Debug.Log($"Debugging user id from message handling: {userId}");
-        userFoundOrCreateUser.Invoke(userId);
-
-        await DisableSendMessageButtonIfUserSentMessage();
-        await WaitAndCreateUIMessages();
-        await WaitAndCreateUnreadReplies();
-
-        //set number of messages and number of replies
-        numberOfNewMessages = messages.Count;
-        numberOfNewReplies = repliesReceived.Count;
-
-        //block the buttons if there are no new messages or replies
-        if (numberOfNewMessages == 0)
+        createUser = await userHandling.CheckIfUserExistsFromUserIdOrUniqueId(firestore);
+        if (createUser == false)
         {
-            openMessagesButton.interactable = false;
+            Debug.Log("createUser is false");
+
+            userId = userHandling.GetIdFromFile(filePath);
+            Debug.Log($"Debugging user id from message handling: {userId}");
+            userFoundOrCreateUser.Invoke(userId);
+
+            await DisableSendMessageButtonIfUserSentMessage();
+            await WaitAndCreateUIMessages();
+            await WaitAndCreateUnreadReplies();
+
+            //set number of messages and number of replies
+            numberOfNewMessages = messages.Count;
+            numberOfNewReplies = repliesReceived.Count;
+
+            //block the buttons if there are no new messages or replies
+            if (numberOfNewMessages == 0)
+            {
+                openMessagesButton.interactable = false;
+            }
+            if (numberOfNewReplies == 0)
+            {
+                openRepliesButton.interactable = false;
+            }
         }
-        if (numberOfNewReplies == 0)
+        else
         {
-            openRepliesButton.interactable = false;
+            Debug.Log("createUser is true");
         }
     }
 

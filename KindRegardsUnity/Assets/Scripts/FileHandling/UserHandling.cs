@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UserHandling : MonoBehaviour
@@ -17,6 +18,7 @@ public class UserHandling : MonoBehaviour
     private string uniqueId;
     private Task sendMessageTask;
     private UIController uiController;
+    private MessageHandling messageHandling;
 
     [SerializeField]
     private GameObject characterCreationCanvas;
@@ -157,10 +159,12 @@ public class UserHandling : MonoBehaviour
         });
     }
 
-    public async Task CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestoreParam)
+    public async Task<bool> CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestoreParam)
     {
+        bool createUser = false;
         userId = GetIdFromFile(filePathUser);
         uiController = uiControllerGameObject.GetComponent<UIController>();
+        messageHandling = gameObject.GetComponent<MessageHandling>();
         firestore = firestoreParam;
 
         //Getting the unique id of the user based on device
@@ -251,24 +255,8 @@ public class UserHandling : MonoBehaviour
                 //If user was not found, redirect to character creation
                 if (userFound == false)
                 {
+                    createUser = true;
                     CreateUser();
-                    /*var user = new
-                    {
-                        //user name should be retrieved from player input
-                        Name = "Kalkstein",
-                        isActive = true,
-                        lastTimeLoggedIn = FieldValue.ServerTimestamp,
-                        lastTimeMessageReceived = FieldValue.ServerTimestamp,
-                        messagesReceivedPerDay = 0,
-                        uniqueId = uniqueId
-                    };
-
-                    await firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
-                    {
-                        Debug.Log($"Newly generated user id is {task.Result.Id}");
-                        SaveIdInBinary(task.Result.Id);
-                        userId = task.Result.Id;
-                    });*/
                 }
                 else
                 {
@@ -330,24 +318,8 @@ public class UserHandling : MonoBehaviour
             //If user was not found, redirect to character creation
             if (userFound == false) 
             {
+                createUser = true;
                 CreateUser();
-                /*var user = new
-                {
-                    //user name should be retrieved from player input
-                    Name = "Kalkstein",
-                    isActive = true,
-                    lastTimeLoggedIn = FieldValue.ServerTimestamp,
-                    lastTimeMessageReceived = FieldValue.ServerTimestamp,
-                    messagesReceivedPerDay = 0,
-                    uniqueId = uniqueId
-                };
-
-                await firestore.Collection("users").AddAsync(user).ContinueWithOnMainThread(task =>
-                {
-                    Debug.Log($"Newly generated user id is {task.Result.Id}");
-                    SaveIdInBinary(task.Result.Id);
-                    userId = task.Result.Id;
-                });*/
             }
             else
             {
@@ -363,6 +335,8 @@ public class UserHandling : MonoBehaviour
                 });
             }
         }
+
+        return createUser;
     }
 
     void CreateUser()
@@ -373,10 +347,8 @@ public class UserHandling : MonoBehaviour
         //await OnAcceptButtonClick();
     }
 
-    public async Task<bool> OnAcceptButtonClick()
+    public async void OnAcceptButtonClick()
     {
-        bool ok = false;
-
         TextMeshProUGUI textName = textNameObject.GetComponent<TextMeshProUGUI>();
         PetColorPicker petColorPicker = petColorPickerObject.GetComponent<PetColorPicker>();
         PetController petController = petControllerObject.GetComponent<PetController>();
@@ -416,13 +388,17 @@ public class UserHandling : MonoBehaviour
             await documentReference.SetAsync(pet).ContinueWithOnMainThread((task) => 
             {
                 Debug.Log("Pet created!");
-                ok = true;
             });
         }
 
         uiController.Back();
         //petController.Accept();
-        return ok;
+
+        messageHandling.UserId = id;
+        //If user creation needs to happen, the tasks from MessageHandling need to be called here
+        await messageHandling.DisableSendMessageButtonIfUserSentMessage();
+        await messageHandling.WaitAndCreateUIMessages();
+        await messageHandling.WaitAndCreateUnreadReplies(); 
     }
 
     void Start()
