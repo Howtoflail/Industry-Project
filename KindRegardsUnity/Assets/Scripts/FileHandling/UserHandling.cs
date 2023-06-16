@@ -166,6 +166,7 @@ public class UserHandling : MonoBehaviour
         uiController = uiControllerGameObject.GetComponent<UIController>();
         messageHandling = gameObject.GetComponent<MessageHandling>();
         firestore = firestoreParam;
+        PetController petController = petControllerObject.GetComponent<PetController>();
 
         //Getting the unique id of the user based on device
         #if UNITY_IOS
@@ -210,6 +211,9 @@ public class UserHandling : MonoBehaviour
                 {
                     Debug.Log($"Updated user last time logged in data!");
                 });
+
+                //Load the character in the game
+                await LoadUser(petController);
             }
 
             if (searchForUser == true)
@@ -270,6 +274,9 @@ public class UserHandling : MonoBehaviour
                     {
                         Debug.Log($"Updated user last time logged in data!");
                     });
+
+                    //Load the character in the game
+                    await LoadUser(petController);
                 }
             }
         }
@@ -333,10 +340,47 @@ public class UserHandling : MonoBehaviour
                 {
                     Debug.Log($"Updated user last time logged in data!");
                 });
+
+                //Load the character in the game
+                await LoadUser(petController);
             }
         }
 
         return createUser;
+    }
+
+    async Task LoadUser(PetController petController)
+    {
+        string petType = "";
+        string petColorString = "";
+        Color petColor;
+
+        await firestore.Collection("pets").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread((task) =>
+        {
+            DocumentSnapshot documentSnapshot = task.Result;
+
+            Dictionary<string, object> pet = documentSnapshot.ToDictionary();
+            foreach (KeyValuePair<string, object> pair in pet)
+            {
+                if (pair.Key == "petColor")
+                {
+                    petColorString = pair.Value.ToString();
+                }
+                else if (pair.Key == "petType")
+                {
+                    petType = pair.Value.ToString();
+                }
+            }
+        });
+
+        if (petType != "" && petColorString != "")
+        {
+            petColor = PetController.stringToColor(petColorString);
+
+            petController.petChoise = (int)Enum.Parse(typeof(PetStateEnum), petType);
+            petController.ShowPet();
+            petController.SetColorCurrentPet(petColor);
+        }
     }
 
     void CreateUser()
@@ -354,7 +398,8 @@ public class UserHandling : MonoBehaviour
         PetController petController = petControllerObject.GetComponent<PetController>();
 
         string name = textName.text;
-        Color currentPetColor = petColorPicker.GetPetColor();
+        //use the function from PetController to convert Color to string
+        string currentPetColor = PetController.colorToString(petColorPicker.GetPetColor());
         string petType = ((PetStateEnum)petController.petChoise).ToString();
 
         var user = new
@@ -399,6 +444,9 @@ public class UserHandling : MonoBehaviour
         await messageHandling.DisableSendMessageButtonIfUserSentMessage();
         await messageHandling.WaitAndCreateUIMessages();
         await messageHandling.WaitAndCreateUnreadReplies(); 
+
+        //Message Handling logic
+        messageHandling.DisableButtonsIfNothingNew();
     }
 
     void Start()

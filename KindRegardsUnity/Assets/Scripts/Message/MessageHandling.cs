@@ -977,6 +977,23 @@ public class MessageHandling : MonoBehaviour
         });
     }
 
+    public void DisableButtonsIfNothingNew()
+    {
+        //set number of messages and number of replies
+        numberOfNewMessages = messages.Count;
+        numberOfNewReplies = repliesReceived.Count;
+
+        //block the buttons if there are no new messages or replies
+        if (numberOfNewMessages == 0)
+        {
+            openMessagesButton.interactable = false;
+        }
+        if (numberOfNewReplies == 0)
+        {
+            openRepliesButton.interactable = false;
+        }
+    }
+
     async Task WaitForTasksBeforeStart()
     {
         bool createUser = false;
@@ -995,19 +1012,7 @@ public class MessageHandling : MonoBehaviour
             await WaitAndCreateUIMessages();
             await WaitAndCreateUnreadReplies();
 
-            //set number of messages and number of replies
-            numberOfNewMessages = messages.Count;
-            numberOfNewReplies = repliesReceived.Count;
-
-            //block the buttons if there are no new messages or replies
-            if (numberOfNewMessages == 0)
-            {
-                openMessagesButton.interactable = false;
-            }
-            if (numberOfNewReplies == 0)
-            {
-                openRepliesButton.interactable = false;
-            }
+            DisableButtonsIfNothingNew();
         }
         else
         {

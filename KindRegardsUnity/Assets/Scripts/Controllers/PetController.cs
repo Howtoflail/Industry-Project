@@ -117,7 +117,7 @@ public class PetController : MonoBehaviour
         return color.r + "," + color.g + "," + color.b;
     }
 
-    private void ShowPet()
+    public void ShowPet()
     {
         foreach (PetState state in states) state.DetectActive((PetStateEnum)petChoise);
     }
