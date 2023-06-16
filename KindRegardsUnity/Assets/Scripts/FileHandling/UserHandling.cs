@@ -19,6 +19,8 @@ public class UserHandling : MonoBehaviour
     private Task sendMessageTask;
     private UIController uiController;
     private MessageHandling messageHandling;
+	
+	public UnityEvent onLoad;
 
     [SerializeField]
     private GameObject characterCreationCanvas;
@@ -381,10 +383,12 @@ public class UserHandling : MonoBehaviour
             petController.ShowPet();
             petController.SetColorCurrentPet(petColor);
         }
+		onLoad.Invoke();
     }
 
     void CreateUser()
     {
+		onLoad.Invoke();
         //Enable character creation canvas 
         uiController.Forward(13);
 
