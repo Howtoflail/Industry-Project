@@ -8,6 +8,9 @@ public class MailGamePlayer : MonoBehaviour
     public MailGameObstacles obstacles;
 
     [SerializeField]
+    GameObject mail;
+
+    [SerializeField]
     private float gravity;
 
     [SerializeField]
@@ -55,7 +58,9 @@ public class MailGamePlayer : MonoBehaviour
         if (other.tag == "PlayerDetector")
         {
             handler.AddScore();
+            DropMail(other.GetComponent<ChimneyDetecor>().chimney);
         }
+        
     }
 
     public bool IsDead()
@@ -67,4 +72,15 @@ public class MailGamePlayer : MonoBehaviour
     {
         this.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, -20);
     }
+
+    private void DropMail(GameObject target)
+    {
+        var planeDelivery = Instantiate(mail, gameObject.transform.position, Quaternion.identity).GetComponent<PlaneDelivery>();
+        
+        planeDelivery.target = target;
+
+    }
+    
+            
+    
 }
