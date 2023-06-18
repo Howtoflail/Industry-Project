@@ -54,7 +54,7 @@ public class BezierFollow : MonoBehaviour
         if(timeWhenSentAnimationFinished != 0f) 
         {
             timeWhenSentAnimationFinished = 0f;
-            //load the mail game
+            //Load the mail game
             SceneManager.LoadScene(1);
         }
 
