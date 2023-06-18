@@ -107,7 +107,7 @@ public class ResponseController : MonoBehaviour
 
     public void CloseSendMessage()
     {
-        StartCoroutine(CloseMessageScreen());
+        StartCoroutine(CloseSendMessageScreen());
     }
 
     public void CloseMessage()
