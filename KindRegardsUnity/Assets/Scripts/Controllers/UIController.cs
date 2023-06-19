@@ -3,7 +3,6 @@ using System.Collections;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.VirtualTexturing;
 
 public class UIController : MonoBehaviour
 {
@@ -21,7 +20,7 @@ public class UIController : MonoBehaviour
         states = Resources.FindObjectsOfTypeAll(typeof(UIState));
         //menuOptions = GameObject.Find("Optionsbg");
         Forward(0);
-        Forward(13);
+        //Forward(13);
     }
     public void NewUser()
     {
@@ -47,6 +46,7 @@ public class UIController : MonoBehaviour
 
     public UIStateEnum GetCurrentUIState()
     {
+        //Debug.Log($"GetCurrentUIState function returns: {uiStates[uiStates.Count - 1]}");
         return uiStates[uiStates.Count - 1];
     }
 
@@ -59,7 +59,9 @@ public class UIController : MonoBehaviour
 
     public void Back()
     {
+        //Debug.Log($"Back function removes: {GetCurrentUIState()}");
         RemoveUIState();
+        //Debug.Log($"And then navigates to: {GetCurrentUIState()}");
         Navigate(GetCurrentUIState());
 
     }
@@ -75,7 +77,7 @@ public class UIController : MonoBehaviour
     public void HideMenu()
     {
         collapsed = true;
-        menuOptions.active = false;
+        menuOptions.SetActive(false);
     }
     public void ShowMenu()
     {

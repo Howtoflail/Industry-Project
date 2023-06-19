@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8061977375623886376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8061977375623886390}
+  - component: {fileID: 8061977375623886377}
+  - component: {fileID: 8061977375623886388}
+  - component: {fileID: 8061977375623886391}
+  m_Layer: 0
+  m_Name: ResponseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8061977375623886390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8061977375623886376}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 498.2199, y: 897.4758, z: -116.83984}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8061977375623886377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8061977375623886376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec81beb206616c84ba8680015b2f8398, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  output: {fileID: 0}
+  panelResponse: {fileID: 0}
+  mail: {fileID: 0}
+  messageOpen: 0
+  panelReply: {fileID: 0}
+--- !u!114 &8061977375623886388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8061977375623886376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d668757653731c43ba4485b1fb7645f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8061977375623886391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8061977375623886376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a7477e7b98169418a1848dad39746c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textMessagesCounter: {fileID: 0}
+  messageBox: {fileID: 0}
+  textMessagePrefab: {fileID: 2287943445759249841, guid: 8c720a8de0d492c4bafd06649b578032,
+    type: 3}
+  textMessageNamePrefab: {fileID: 4196621725959361182, guid: 45e1b9b3275759d4fa005c02c8c3fc18,
+    type: 3}
+  panelResponse: {fileID: 0}
+  messageObject: {fileID: 0}
+  replyLabel: {fileID: 0}
+  textRepliesCounter: {fileID: 0}
+  replyMessageBox: {fileID: 0}
+  replyBox: {fileID: 0}
+  textReplyMessagePrefab: {fileID: 6271258678866434281, guid: d2b791694c1d49f458339e720d2bedab,
+    type: 3}
+  textReplyMessageNamePrefab: {fileID: 3611249582724107354, guid: 8bbda3353a7467d44802c8a6c19571f8,
+    type: 3}
+  textReplyPrefab: {fileID: 2849867029656869108, guid: 4d59785cf858316428e05abe6ddf06d5,
+    type: 3}
+  textReplyNamePrefab: {fileID: 8593243583440234518, guid: e6dc4020bbfab7a4393fa75d939e5c64,
+    type: 3}
+  panelReply: {fileID: 0}
+  openMessagesButton: {fileID: 0}
+  openRepliesButton: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+    type: 3}
+  sendMessageButton: {fileID: 0}
+  cantSendMessageText: {fileID: 0}

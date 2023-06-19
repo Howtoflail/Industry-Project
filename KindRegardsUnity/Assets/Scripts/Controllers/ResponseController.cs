@@ -8,22 +8,14 @@ public class ResponseController : MonoBehaviour
     public TextMeshProUGUI output;
     [SerializeField] public GameObject panelResponse;
     [SerializeField] public GameObject mail;
-    [SerializeField] private bool open;
+    [SerializeField] private bool messageOpen;
+    [SerializeField] private GameObject panelReply;
+    private bool replyOpen;
 
     void Start()
     {
-        open = false;
-    }
-
-    void Update()
-    {
-        if(mail.active == true)
-        {
-            if(Input.GetKey("mouse 0"))
-            {
-                OpenMessage();
-            }
-        }
+        messageOpen = false;
+        replyOpen = false;
     }
     
     public void HandleInputData(int response)
@@ -46,23 +38,45 @@ public class ResponseController : MonoBehaviour
 
     public void OpenMessage()
     {
-        if(open == false)
-            {
-                panelResponse.active = true; 
-                open = true;
-            }
+        if (messageOpen == false)
+        {
+            panelResponse.SetActive(true);
+            messageOpen = true;
+        }
     }
 
-    public IEnumerator CloseScreen()
+    public void OpenReply()
     {
-        panelResponse.active = false;
+        if (replyOpen == false)
+        {
+            panelReply.SetActive(true);
+            replyOpen = true;
+        }
+    }
+
+    private IEnumerator CloseMessageScreen()
+    {
+        panelResponse.SetActive(false);
         float waitTime = 4;
         yield return new WaitForSeconds(waitTime);
-        open = false;
+        messageOpen = false;
+    }
+
+    private IEnumerator CloseReplyScreen()
+    {
+        panelReply.SetActive(false);
+        float waitTime = 4;
+        yield return new WaitForSeconds(waitTime);
+        replyOpen = false;
     }
 
     public void CloseMessage()
     {
-        StartCoroutine(CloseScreen());
+        StartCoroutine(CloseMessageScreen());
+    }
+
+    public void CloseReply()
+    {
+        StartCoroutine(CloseReplyScreen());
     }
 }
