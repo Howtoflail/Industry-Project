@@ -8,6 +8,7 @@ public class PlaneDelivery : MonoBehaviour
 
     [SerializeField] private float speed = 10f;
     public GameObject target;
+    private GameObject animator;
 
     void Start() { }
 
@@ -22,9 +23,10 @@ public class PlaneDelivery : MonoBehaviour
             speed * Time.fixedDeltaTime
         );
 
-        if (Vector3.Distance(transform.position, target.transform.position) < 1f)
+        if (Vector3.Distance(transform.position, target.transform.position) < 4f)
         {
-            Destroy(gameObject);
+            Destroy(gameObject, 0.5f);
+            target.transform.parent.GetComponent<Animator>().SetTrigger("Delivered");
         }
         
         

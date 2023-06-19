@@ -21,8 +21,11 @@ public class MailGamePlayer : MonoBehaviour
 
     private MailGameHandler handler;
 
+    private List<GameObject> mails;
+
     void Start()
     {
+        mails = new List<GameObject>();
         handler = GameObject.Find("MailGame").GetComponent<MailGameHandler>();
         rb = GetComponent<Rigidbody2D>();
         obstacles = GameObject.Find("MailGame").GetComponent<MailGameObstacles>();
@@ -58,7 +61,7 @@ public class MailGamePlayer : MonoBehaviour
         if (other.tag == "PlayerDetector")
         {
             handler.AddScore();
-            DropMail(other.GetComponent<ChimneyDetecor>().chimney);
+            DropMail(other.GetComponent<ChimneyDetecor>().targetObject);
         }
         
     }
@@ -71,14 +74,20 @@ public class MailGamePlayer : MonoBehaviour
     public void ResetPosition()
     {
         this.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, -20);
+        // foreach(GameObject mailObjects in mails)
+        // {
+        //     Destroy(mailObjects);
+        // }
+        // mails.Clear();  
     }
+    
 
     private void DropMail(GameObject target)
     {
-        var planeDelivery = Instantiate(mail, gameObject.transform.position, Quaternion.identity).GetComponent<PlaneDelivery>();
+        GameObject newMail = Instantiate(mail, gameObject.transform.position, Quaternion.identity);
         
-        planeDelivery.target = target;
-
+        newMail.GetComponent<PlaneDelivery>().target = target;
+        // mails.Add(newMail);
     }
     
             

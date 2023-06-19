@@ -5,7 +5,8 @@ using UnityEngine;
 public class ChimneyDetecor : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject chimney;
+    public GameObject targetObject;
+    public GameObject chimneyObject;
     void Start()
     {
         
