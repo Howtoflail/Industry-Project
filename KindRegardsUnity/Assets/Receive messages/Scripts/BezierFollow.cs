@@ -15,6 +15,15 @@ public class BezierFollow : MonoBehaviour
     [SerializeField]
     private GameObject[] uiElements;
 
+    [SerializeField]
+    private GameObject mainCamera;
+
+    [SerializeField]
+    private GameObject uiCanvas;
+
+    [SerializeField]
+    private GameObject uiTransition;
+
     private MessageHandling messageHandling;
 
     private int routeToGo;
@@ -55,7 +64,9 @@ public class BezierFollow : MonoBehaviour
         {
             timeWhenSentAnimationFinished = 0f;
             //Load the mail game
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(1, LoadSceneMode.Additive);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged += CheckIfMainSceneIsActivated;
         }
 
         if(timeWhenArriveAnimationFinished != 0f)
@@ -67,6 +78,29 @@ public class BezierFollow : MonoBehaviour
                 uiElement.SetActive(true);
             }
         }
+    }
+
+    void CheckIfMainSceneIsActivated(Scene current, Scene next)
+    {
+        Debug.Log($"Next scene is: {next.name}");
+        if(next.name == "KindRegards")
+        {
+            //Enable main camera
+            mainCamera.SetActive(true);
+            //Enable all UI
+            uiCanvas.SetActive(true);
+            uiTransition.SetActive(false);
+        }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded!");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
+        //Disable main camera to switch to the other scene's camera
+        mainCamera.SetActive(false);
+        //Disable all UI
+        uiCanvas.SetActive(false);
     }
 
     public void OnClickMove()
@@ -89,6 +123,10 @@ public class BezierFollow : MonoBehaviour
                 Debug.Log($"If check works");
                 timeWhenMessageSent = Time.time;
                 routeToGo = 3;
+
+                //Disable UI during animation
+                uiCanvas.SetActive(false);
+
                 StartCoroutine(GoByTheRoute(routeToGo));
             }
         });

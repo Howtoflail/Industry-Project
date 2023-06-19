@@ -47,8 +47,13 @@ public class StickerBoxOpening : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene(0);
+            SceneManager.UnloadSceneAsync(2);
         }
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("Scene disabled with OnDisable");
     }
 
     private void Open()

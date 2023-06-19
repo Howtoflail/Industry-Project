@@ -57,6 +57,13 @@ public class MailGameHandler : MonoBehaviour
 
     public void Win()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(2, LoadSceneMode.Additive);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(2));
+        SceneManager.UnloadSceneAsync(1);
     }
 }

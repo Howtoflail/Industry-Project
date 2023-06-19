@@ -84,7 +84,7 @@ public class RotateLook : MonoBehaviour
         lastY = currentY;
         //Basically lerp
         float s = playerVelocity;
-        print("Velocity = " + s);
+        //print("Velocity = " + s);
         r = r - (r - s * 45) * 4f * Time.deltaTime;
         transform.rotation = Quaternion.Euler(0, 0, r);
         // print(Mathf.Sign(s));
