@@ -113,18 +113,18 @@ public class MailGameObstacles : MonoBehaviour
     {
         nextSpawnTime += timeBetweenObstacles;
 
-        GameObject detector = Instantiate(
-            playerDetector,
-            GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Detectors")
-        );
+        // GameObject detector = Instantiate(
+        //     playerDetector,
+        //     GameObject.FindGameObjectWithTag("Canvas").transform.Find("MailGame/Detectors")
+        // );
 
-        playerDetectors.Add(detector);
+        // playerDetectors.Add(detector);
 
         SpawnObstaclesBottom();
         SpawnObstaclesTop();
 
-        detector.transform.position =
-            transform.position + new Vector3(obstacleSpawnPositionX, 0, 0);
+        // detector.transform.position =
+        //     transform.position + new Vector3(obstacleSpawnPositionX, 0, 0);
 
         // top.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
         // bottom.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MailGameHandler : MonoBehaviour
 {
@@ -52,5 +53,10 @@ public class MailGameHandler : MonoBehaviour
         startButton.SetActive(true);
         obstacles.FreezeAll();
         background.StopParallax();
+    }
+
+    public void Win()
+    {
+        SceneManager.LoadScene(2);
     }
 }
