@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PuzzleGameController : MonoBehaviour
@@ -15,6 +16,11 @@ public class PuzzleGameController : MonoBehaviour
 
     public List<Button> btns = new List<Button>();
 
+    [SerializeField]
+    public Transform menuBg;
+    public Transform menuIcon;
+    public GameObject[] Objecten;
+
     private bool firstGuess, secondGuess;
 
     private int countGuesses;
@@ -24,6 +30,8 @@ public class PuzzleGameController : MonoBehaviour
     private int firstGuessIndex, secondGuessIndex;
 
     private string firstGuessPuzzle, secondGuessPuzzle;
+
+
      void Awake()
     {
         puzzles = Resources.LoadAll<Sprite>("Sprites/MemoryGame");
@@ -35,6 +43,23 @@ public class PuzzleGameController : MonoBehaviour
         AddGamePuzzles();
         Shuffle(gamePuzzles);
         gameGuesses = gamePuzzles.Count / 2;
+
+        Scene s = SceneManager.GetSceneByName("KindRegards");
+        Objecten = s.GetRootGameObjects();
+        
+        foreach(GameObject obj in Objecten)
+        {
+            if(obj.name == "UI Canvas")
+            {
+                menuBg = obj.transform.Find("Menubg");
+                menuIcon = menuBg.transform.Find("Menu Icon");
+                menuBg.gameObject.SetActive(false);
+                menuIcon.gameObject.SetActive(false);
+            }
+        }
+
+
+
     }
     void GetButtons()
     {
@@ -48,6 +73,7 @@ public class PuzzleGameController : MonoBehaviour
 
     void AddGamePuzzles()
     {
+        
         int looper = btns.Count;
         int index = 0;
 
@@ -137,6 +163,11 @@ public class PuzzleGameController : MonoBehaviour
         {
             Debug.Log("GameFinished!!");
             Debug.Log("It took you:" + countGuesses + " guesses");
+            menuBg.gameObject.SetActive(true);
+            menuIcon.gameObject.SetActive(true);
+
+            SceneManager.UnloadSceneAsync("MemoryGame");
+
         }
     }
 
