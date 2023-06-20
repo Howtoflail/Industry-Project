@@ -29,7 +29,7 @@ public class UIController : MonoBehaviour
     {
         collapsed = true;
         //menuOptions = GameObject.Find("Optionsbg");
-        menuOptions.SetActive(false);
+        // menuOptions.SetActive(false);
     }
 
     private void Navigate(UIStateEnum uiState)
@@ -73,23 +73,23 @@ public class UIController : MonoBehaviour
     public void MenuClick()
     {
         collapsed = !collapsed;
-        if (!collapsed)
-            menuOptions.SetActive(true);
+        // if (!collapsed)
+            // menuOptions.SetActive(true);
 
-        StartCoroutine(animationController.MenuAnimation(menuOptions, collapsed));
-        if (collapsed)
-            menuOptions.SetActive(false);
+        // StartCoroutine(animationController.MenuAnimation(menuOptions, collapsed));
+        // if (collapsed)
+        //     // menuOptions.SetActive(false);
     }
 
     public void HideMenu()
     {
         collapsed = true;
-        menuOptions.SetActive(false);
+        // menuOptions.SetActive(false);
     }
 
     public void ShowMenu()
     {
         collapsed = false;
-        menuOptions.SetActive(true);
+        // menuOptions.SetActive(true);
     }
 }
