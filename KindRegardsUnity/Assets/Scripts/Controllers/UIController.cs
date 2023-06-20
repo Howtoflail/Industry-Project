@@ -22,7 +22,7 @@ public class UIController : MonoBehaviour
         states = Resources.FindObjectsOfTypeAll(typeof(UIState));
         //menuOptions = GameObject.Find("Optionsbg");
         Forward(0);
-        Forward(13);
+        //Forward(13);
     }
 
     public void NewUser()

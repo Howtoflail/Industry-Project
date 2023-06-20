@@ -1043,7 +1043,7 @@ public class MessageHandling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        textMessagesCounter.text = $"You have {messages.Count} new messages";
-        textRepliesCounter.text = $"You have {repliesReceived.Count} new replies";
+        textMessagesCounter.text = $"{messages.Count}";
+        textRepliesCounter.text = $"{repliesReceived.Count}";
     }
 }

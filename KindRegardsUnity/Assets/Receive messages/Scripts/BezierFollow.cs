@@ -116,6 +116,14 @@ public class BezierFollow : MonoBehaviour
         }
     }
 
+    public void ResetUIWhenLeavingMail()
+    {
+        foreach (GameObject uiElement in uiElements)
+        {
+            uiElement.SetActive(false);
+        }
+    }
+
     public void SetTimeWhenCameraAnimationFinished()
     {
         timeWhenCameraAnimationFinished = Time.time;
