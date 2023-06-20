@@ -8,7 +8,9 @@ public class UIController : MonoBehaviour
 {
     private List<UIStateEnum> uiStates;
     private UnityEngine.Object[] states;
-    [SerializeField] private GameObject menuOptions;
+
+    [SerializeField]
+    private GameObject menuOptions;
     private UIAnimationController animationController;
     private bool collapsed;
 
@@ -20,18 +22,20 @@ public class UIController : MonoBehaviour
         states = Resources.FindObjectsOfTypeAll(typeof(UIState));
         //menuOptions = GameObject.Find("Optionsbg");
         Forward(0);
-        //Forward(13);
+        Forward(13);
     }
+
     public void NewUser()
     {
         collapsed = true;
-        //menuOptions = GameObject.Find("Optionsbg");     
+        //menuOptions = GameObject.Find("Optionsbg");
         menuOptions.SetActive(false);
     }
 
     private void Navigate(UIStateEnum uiState)
     {
-        foreach (UIState state in states) state.DetectActive(uiState);
+        foreach (UIState state in states)
+            state.DetectActive(uiState);
     }
 
     private void AddUIState(UIStateEnum newUIState)
@@ -52,7 +56,8 @@ public class UIController : MonoBehaviour
 
     public void Forward(int uiState)
     {
-        if (!collapsed) MenuClick();
+        if (!collapsed)
+            MenuClick();
         AddUIState((UIStateEnum)uiState);
         Navigate(GetCurrentUIState());
     }
@@ -63,22 +68,25 @@ public class UIController : MonoBehaviour
         RemoveUIState();
         //Debug.Log($"And then navigates to: {GetCurrentUIState()}");
         Navigate(GetCurrentUIState());
-
     }
 
     public void MenuClick()
     {
         collapsed = !collapsed;
-        if (!collapsed) menuOptions.SetActive(true);
-        
+        if (!collapsed)
+            menuOptions.SetActive(true);
+
         StartCoroutine(animationController.MenuAnimation(menuOptions, collapsed));
-        if (collapsed) menuOptions.SetActive(false);
+        if (collapsed)
+            menuOptions.SetActive(false);
     }
+
     public void HideMenu()
     {
         collapsed = true;
         menuOptions.SetActive(false);
     }
+
     public void ShowMenu()
     {
         collapsed = false;
