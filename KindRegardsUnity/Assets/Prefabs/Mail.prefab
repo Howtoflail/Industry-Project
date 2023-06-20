@@ -999,8 +999,20 @@ PrefabInstance:
     - target: {fileID: 7142090565022869565, guid: c4a33858e7452cb45a9d1f1a5e082c84,
         type: 3}
       propertyPath: m_Transition
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7142090565022869565, guid: c4a33858e7452cb45a9d1f1a5e082c84,
+        type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b5957de1bfcdd06489ed1e491e19b4e1,
+        type: 3}
+    - target: {fileID: 7142090565022869565, guid: c4a33858e7452cb45a9d1f1a5e082c84,
+        type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b5957de1bfcdd06489ed1e491e19b4e1,
+        type: 3}
     - target: {fileID: 7142090565022869565, guid: c4a33858e7452cb45a9d1f1a5e082c84,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1218,7 +1230,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5010396880414306201}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ef98126da89d5f4ca1d9ba8b14fb19a, type: 3}
   m_Name: 
@@ -1259,6 +1271,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OpenRepliesButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2146751193136872869, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2146751193136872870, guid: 6c0091acda81e9e44a8f6321f8cf854d,
         type: 3}
@@ -1367,9 +1384,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
         type: 3}
-      propertyPath: m_Transition
-      value: 0
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+        type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+        type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 074d8034e089b6d43adc712ac062f9cd,
+        type: 3}
+    - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
+        type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 074d8034e089b6d43adc712ac062f9cd,
+        type: 3}
     - target: {fileID: 2146751193136872871, guid: 6c0091acda81e9e44a8f6321f8cf854d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1491,7 +1530,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4278285763194440321}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ef98126da89d5f4ca1d9ba8b14fb19a, type: 3}
   m_Name: 
