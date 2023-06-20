@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.Events;
 
 public class CameraAnimationController : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class CameraAnimationController : MonoBehaviour
     CameraController cameraController;
     [SerializeField] Canvas canvas;
 	[SerializeField] private BookDirector bookDirector;
+
+    public UnityEvent onMailAnimationFinished;
 
     private void Start()
     {
@@ -115,6 +118,7 @@ public class CameraAnimationController : MonoBehaviour
                     cameraDTO.cameraMove.SetBool("MessageOut", false);
                     //waits for the animation to finish
                     yield return new WaitForSeconds(2);
+                    onMailAnimationFinished.Invoke();
                     //Make the sidebar visible again
                     Show();
                     break;

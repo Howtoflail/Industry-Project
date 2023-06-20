@@ -761,10 +761,10 @@ public class MessageHandling : MonoBehaviour
                 {"messagesReceivedPerDay", userToSendMessageTo.MessagesReceivedPerDay}
             };
 
-            /*await firestore.Collection("users").Document(userId).SetAsync(updates, SetOptions.MergeAll).ContinueWith((task) => 
+            await firestore.Collection("users").Document(userId).SetAsync(updates, SetOptions.MergeAll).ContinueWith((task) =>
             {
                 Debug.Log($"Updated user message data!");
-            });*/
+            });
         }
         
         if(userIdsToSendMessagesTo.Count > 0) 
@@ -784,7 +784,7 @@ public class MessageHandling : MonoBehaviour
             };
 
             //Updating the time that the user sent the last message
-            /*await firestore.Collection("users").Document(userId).SetAsync(updateLastTimeMessageSent, SetOptions.MergeAll).ContinueWith((task) => 
+            await firestore.Collection("users").Document(userId).SetAsync(updateLastTimeMessageSent, SetOptions.MergeAll).ContinueWith((task) =>
             {
                 Debug.Log("Updated last time this user sent a message!");
             });
@@ -792,16 +792,16 @@ public class MessageHandling : MonoBehaviour
             await firestore.Collection("messages").AddAsync(message).ContinueWith(task =>
             {
                 Debug.Log($"Newly generated message id is {task.Result.Id}");
-            });*/
+            });
 
             //Playing animation for sending a message
             messageObject.SetActive(true);
             messageAnimator.SetTrigger("MessageCreated");
 
-            /*//Disabling the send message button since the limit is to send one message per day
+            //Disabling the send message button since the limit is to send one message per day
             sendMessageButton.interactable = false;
             //Inform the player that he has already sent a message today!
-            cantSendMessageText.SetActive(true);*/
+            cantSendMessageText.SetActive(true);
 
             return true;
         }

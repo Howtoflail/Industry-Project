@@ -24,6 +24,23 @@ public class BezierFollow : MonoBehaviour
     [SerializeField]
     private GameObject uiTransition;
 
+    [SerializeField]
+    private GameObject[] pets;
+
+    [SerializeField]
+    private float timeToWaitForInit = 2f;
+
+    private bool petFound = false;
+
+    private GameObject petEnabled;
+
+    private AudioSource petAudioSource;
+
+    [SerializeField]
+    private AudioClip petAudioClip;
+
+    private float timeWhenCameraAnimationFinished;
+
     private MessageHandling messageHandling;
 
     private int routeToGo;
@@ -51,8 +68,9 @@ public class BezierFollow : MonoBehaviour
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
+        timeWhenCameraAnimationFinished = 0f;
 
-        foreach(GameObject uiElement in uiElements) 
+        foreach (GameObject uiElement in uiElements) 
         {
             uiElement.SetActive(false);
         }
@@ -60,6 +78,24 @@ public class BezierFollow : MonoBehaviour
 
     void Update()
     {
+        //Get the enabled pet after the user is initialized
+        if(Time.time >= timeToWaitForInit && petFound == false) 
+        {
+            petFound = true;
+
+            //Get the enabled pet
+            foreach (GameObject pet in pets)
+            {
+                if (pet.activeSelf)
+                {
+                    petEnabled = pet;
+                }
+            }
+
+            Debug.Log($"Pet enabled is: {petEnabled.name}");
+            petAudioSource = petEnabled.GetComponent<AudioSource>();
+        }
+
         if(timeWhenSentAnimationFinished != 0f) 
         {
             timeWhenSentAnimationFinished = 0f;
@@ -78,6 +114,12 @@ public class BezierFollow : MonoBehaviour
                 uiElement.SetActive(true);
             }
         }
+    }
+
+    public void SetTimeWhenCameraAnimationFinished()
+    {
+        timeWhenCameraAnimationFinished = Time.time;
+        Debug.Log($"Time when camera animation finished: {timeWhenCameraAnimationFinished}");
     }
 
     void CheckIfMainSceneIsActivated(Scene current, Scene next)
@@ -135,9 +177,22 @@ public class BezierFollow : MonoBehaviour
 
     private IEnumerator GoByTheRoute(int routeNumber)
     {
+        while(timeWhenCameraAnimationFinished == 0f && routeNumber != 3) 
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        if(routeNumber != 3) 
+        {
+            petAudioSource.loop = true;
+            petAudioSource.Play();
+        }
+
         if(timeWhenMessageSent != 0f)
         {
             yield return new WaitForSeconds(timeToWaitForSendingMessageAnimation);
+            petAudioSource.loop = true;
+            petAudioSource.Play();
         }
 
         coroutineAllowed = false;
@@ -186,5 +241,8 @@ public class BezierFollow : MonoBehaviour
             timeWhenArriveAnimationFinished = Time.time;
             Debug.Log($"Time when animation finished: {timeWhenArriveAnimationFinished}");
         }
+
+        petAudioSource.Stop();
+        timeWhenCameraAnimationFinished = 0f;
     }
 }

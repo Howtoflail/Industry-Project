@@ -11,7 +11,7 @@ public class UIState : MonoBehaviour
         if (uiStates.Contains(currentState))
         {
             gameObject.SetActive(true);
-            Debug.Log($"Active state now is: {currentState}");
+            //Debug.Log($"Active state now is: {currentState}");
         }
         else
         {

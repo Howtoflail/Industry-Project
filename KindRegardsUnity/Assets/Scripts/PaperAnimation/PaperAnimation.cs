@@ -10,7 +10,12 @@ public class PaperAnimation : MonoBehaviour
     private Text textRenderer;
     [SerializeField]
     private float animationTime = 6f;
+    [SerializeField]
+    private AudioClip audioClip;
+    [SerializeField]
+    private float timeWhenAudioClipEnds = 6f;
 
+    private AudioSource audioSource;
     private Material material;
     private bool animationStarted;
     private bool animationFinished;
@@ -31,7 +36,12 @@ public class PaperAnimation : MonoBehaviour
 
     void Start()
     {
+        audioSource = gameObject.GetComponent<AudioSource>();
+        audioSource.PlayOneShot(audioClip);
+
         timeWhenObjectActivated = Time.time;
+        timeWhenAudioClipEnds += timeWhenObjectActivated;
+
         material = textRenderer.material;
         visibilityPercentage = 0f;
         material.SetFloat("_Visibility", visibilityPercentage);  
@@ -64,6 +74,10 @@ public class PaperAnimation : MonoBehaviour
         if(Time.time >= (timeWhenObjectActivated + animationTime))
         {
             gameObject.SetActive(false);
+        }
+        if(Time.time >= timeWhenAudioClipEnds) 
+        {
+            audioSource.Stop();
         }
     }
 }
