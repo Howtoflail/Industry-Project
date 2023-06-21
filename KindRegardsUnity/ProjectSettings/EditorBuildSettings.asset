@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/KindRegards.unity
     guid: 3691c558919fc5a4a800e94fff883052
+  - enabled: 1
+    path: Assets/Scenes/Micro Game Testing/Mail Game Test.unity
+    guid: 215c6eee813c365469041888abd406fa
+  - enabled: 1
+    path: Assets/Scenes/Sticker Drops Test Scene.unity
+    guid: 1b0b6b2305af9504e9bd363d6f954835
   m_configObjects: {}

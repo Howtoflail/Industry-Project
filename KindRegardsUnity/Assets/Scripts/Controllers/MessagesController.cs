@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
@@ -18,7 +17,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEditor.PackageManager.Requests;
 using System.Diagnostics;
 using System.Net;
 using System.IO;
@@ -95,17 +93,21 @@ public class MessagesController : MonoBehaviour
     void Update()
     {
     }
-    private void OnMouseDown()
+
+    //Remove this
+    /*private void OnMouseDown()
     {
         messagingScreen.active = true;
-    }
+    }*/
+
+    //Remove this
     public void StartMessage()
     {
-        UnityEngine.Debug.Log("i get here");
+        /*UnityEngine.Debug.Log("i get here");
         messagingScreen.active = true;
         menuBg.active = false;
         send.active = false;
-        messaging.active = false;
+        messaging.active = false;*/
     }
     public void CancalMessage()
     {

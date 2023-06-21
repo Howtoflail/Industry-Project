@@ -1,11 +1,47 @@
+using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BezierFollow : MonoBehaviour
 {
     [SerializeField]
     private Transform[] routes;
+
+    [SerializeField]
+    private GameObject messageHandlingObject;
+
+    [SerializeField]
+    private GameObject[] uiElements;
+
+    [SerializeField]
+    private GameObject mainCamera;
+
+    [SerializeField]
+    private GameObject uiCanvas;
+
+    [SerializeField]
+    private GameObject uiTransition;
+
+    [SerializeField]
+    private GameObject[] pets;
+
+    [SerializeField]
+    private float timeToWaitForInit = 2f;
+
+    private bool petFound = false;
+
+    private GameObject petEnabled;
+
+    private AudioSource petAudioSource;
+
+    [SerializeField]
+    private AudioClip petAudioClip;
+
+    private float timeWhenCameraAnimationFinished;
+
+    private MessageHandling messageHandling;
 
     private int routeToGo;
 
@@ -17,34 +53,162 @@ public class BezierFollow : MonoBehaviour
 
     private bool coroutineAllowed;
 
+    private float timeWhenMessageSent = 0f;
+
+    [SerializeField]
+    private float timeToWaitForSendingMessageAnimation = 6f;
+
+    private float timeWhenSentAnimationFinished = 0f;
+
+    private float timeWhenArriveAnimationFinished = 0f;
+
     void Start()
     {
-        // routeToGo = 0;
+        messageHandling = messageHandlingObject.GetComponent<MessageHandling>();
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
-    }
+        timeWhenCameraAnimationFinished = 0f;
 
-
-        public void OnClickMove()
-    {
-        if (coroutineAllowed)
+        foreach (GameObject uiElement in uiElements) 
         {
-            routeToGo = Random.Range(0,3);
-            StartCoroutine(GoByTheRoute(routeToGo));
-
+            uiElement.SetActive(false);
         }
     }
 
-
-    private IEnumerator GoByTheRoute(int routeNum)
+    void Update()
     {
+        //Get the enabled pet after the user is initialized
+        if(Time.time >= timeToWaitForInit && petFound == false) 
+        {
+            petFound = true;
+
+            //Get the enabled pet
+            foreach (GameObject pet in pets)
+            {
+                if (pet.activeSelf)
+                {
+                    petEnabled = pet;
+                }
+            }
+
+            Debug.Log($"Pet enabled is: {petEnabled.name}");
+            petAudioSource = petEnabled.GetComponent<AudioSource>();
+        }
+
+        if(timeWhenSentAnimationFinished != 0f) 
+        {
+            timeWhenSentAnimationFinished = 0f;
+            //Load the mail game
+            SceneManager.LoadScene(1, LoadSceneMode.Additive);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged += CheckIfMainSceneIsActivated;
+        }
+
+        if(timeWhenArriveAnimationFinished != 0f)
+        {
+            timeWhenArriveAnimationFinished = 0f;
+            //Enable the buttons
+            foreach (GameObject uiElement in uiElements)
+            {
+                uiElement.SetActive(true);
+            }
+        }
+    }
+
+    public void ResetUIWhenLeavingMail()
+    {
+        foreach (GameObject uiElement in uiElements)
+        {
+            uiElement.SetActive(false);
+        }
+    }
+
+    public void SetTimeWhenCameraAnimationFinished()
+    {
+        timeWhenCameraAnimationFinished = Time.time;
+        Debug.Log($"Time when camera animation finished: {timeWhenCameraAnimationFinished}");
+    }
+
+    void CheckIfMainSceneIsActivated(Scene current, Scene next)
+    {
+        Debug.Log($"Next scene is: {next.name}");
+        if(next.name == "KindRegards")
+        {
+            //Enable main camera
+            mainCamera.SetActive(true);
+            //Enable all UI
+            uiCanvas.SetActive(true);
+            uiTransition.SetActive(false);
+        }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded!");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
+        //Disable main camera to switch to the other scene's camera
+        mainCamera.SetActive(false);
+        //Disable all UI
+        uiCanvas.SetActive(false);
+    }
+
+    public void OnClickMove()
+    {
+        if (coroutineAllowed)
+        {
+            routeToGo = Random.Range(0, 3); //This can return 0, 1 or 2
+            StartCoroutine(GoByTheRoute(routeToGo));
+        }
+    }
+
+    public void SendMessageAfterWriting()
+    {
+        messageHandling.SendMessage().ContinueWithOnMainThread((task) => 
+        {
+            Debug.Log($"Sending a message returns: {task.Result}");
+
+            if (coroutineAllowed && task.Result)
+            {
+                Debug.Log($"If check works");
+                timeWhenMessageSent = Time.time;
+                routeToGo = 3;
+
+                //Disable UI during animation
+                uiCanvas.SetActive(false);
+
+                StartCoroutine(GoByTheRoute(routeToGo));
+            }
+        });
+    }
+
+
+    private IEnumerator GoByTheRoute(int routeNumber)
+    {
+        while(timeWhenCameraAnimationFinished == 0f && routeNumber != 3) 
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        if(routeNumber != 3) 
+        {
+            petAudioSource.loop = true;
+            petAudioSource.Play();
+        }
+
+        if(timeWhenMessageSent != 0f)
+        {
+            yield return new WaitForSeconds(timeToWaitForSendingMessageAnimation);
+            petAudioSource.loop = true;
+            petAudioSource.Play();
+        }
+
         coroutineAllowed = false;
 
-        Vector3 p0 = routes[routeNum].GetChild(0).position;
-        Vector3 p1 = routes[routeNum].GetChild(1).position;
-        Vector3 p2 = routes[routeNum].GetChild(2).position;
-        Vector3 p3 = routes[routeNum].GetChild(3).position;
+        Vector3 p0 = routes[routeNumber].GetChild(0).position;
+        Vector3 p1 = routes[routeNumber].GetChild(1).position;
+        Vector3 p2 = routes[routeNumber].GetChild(2).position;
+        Vector3 p3 = routes[routeNumber].GetChild(3).position;
 
         while (tParam < 1)
         {
@@ -75,6 +239,18 @@ public class BezierFollow : MonoBehaviour
         // }
 
         coroutineAllowed = true;
+        if(routeNumber == 3) 
+        {
+            timeWhenSentAnimationFinished = Time.time;
+            Debug.Log($"Time when animation finished: {timeWhenSentAnimationFinished}");
+        }
+        else
+        {
+            timeWhenArriveAnimationFinished = Time.time;
+            Debug.Log($"Time when animation finished: {timeWhenArriveAnimationFinished}");
+        }
 
+        petAudioSource.Stop();
+        timeWhenCameraAnimationFinished = 0f;
     }
 }

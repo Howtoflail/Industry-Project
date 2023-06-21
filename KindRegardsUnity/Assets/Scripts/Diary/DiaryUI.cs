@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
-using UnityEditor.Search;
 
 public class DiaryUI : MonoBehaviour
 {

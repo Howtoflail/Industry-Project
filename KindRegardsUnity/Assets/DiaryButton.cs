@@ -8,6 +8,8 @@ public class DiaryButton : MonoBehaviour
     [SerializeField]
     public Animator diaryNotifcation;
     public Button button;
+    [SerializeField]
+    public GameObject diary;
     private bool animationPlayed;
     // Start is called before the first frame update
     void Start()
@@ -23,6 +25,11 @@ public class DiaryButton : MonoBehaviour
         if(button.gameObject.activeInHierarchy == true)
         {
             Invoke(nameof(PlayNudge), 3);
+        }
+
+        if (diary.gameObject.activeInHierarchy == true)
+        {
+            DisableButtonOnClick();
         }
     }
 
