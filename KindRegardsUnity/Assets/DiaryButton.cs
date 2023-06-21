@@ -6,21 +6,24 @@ using UnityEngine.UI;
 public class DiaryButton : MonoBehaviour
 {
     [SerializeField]
-    private Animator diaryNotifcation;
+    public Animator diaryNotifcation;
     public Button button;
+    private bool animationPlayed;
     // Start is called before the first frame update
     void Start()
     {
         Button btn = button.GetComponent<Button>();
         btn.onClick.AddListener(DisableButtonOnClick);
-        StartCoroutine(PlayNudge());
-        Invoke("PlayNudge", 100);
+        diaryNotifcation = this.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(button.gameObject.activeInHierarchy == true)
+        {
+            Invoke(nameof(PlayNudge), 3);
+        }
     }
 
     void DisableButtonOnClick()
