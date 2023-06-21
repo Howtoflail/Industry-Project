@@ -4,14 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/KindRegards.unity
-    guid: 3691c558919fc5a4a800e94fff883052
-  - enabled: 1
-    path: Assets/Scenes/Micro Game Testing/Mail Game Test.unity
-    guid: 215c6eee813c365469041888abd406fa
-  - enabled: 1
-    path: Assets/Scenes/MemoryGame.unity
-    guid: 71203251d2eb5944aace5430149f5d97
+  m_Scenes: []
   m_configObjects: {}

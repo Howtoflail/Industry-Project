@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 71203251d2eb5944aace5430149f5d97
+<<<<<<< HEAD:KindRegardsUnity/Assets/Scenes/MemoryGame.unity.meta
+guid: f7e57ae31394a9b4290783b899457df2
+=======
+guid: 21e1068a7381f59449739b8931113ef6
+>>>>>>> origin/development:KindRegardsUnity/Assets/StreamingAssets/UnityServicesProjectConfiguration.json.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

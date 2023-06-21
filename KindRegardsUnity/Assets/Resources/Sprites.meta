@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: cfd4357d066f71348b4872bcf229f027
+<<<<<<< HEAD:KindRegardsUnity/Assets/Resources/Sprites.meta
+guid: e2e839c465c21774891ae57a937bdd25
+=======
+guid: a647d47f50c116f4d9b3435ec7c321b5
+>>>>>>> origin/development:KindRegardsUnity/Assets/Scripts/Dropdowns.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

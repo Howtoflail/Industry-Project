@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: e4eb9e482b0cd724dab28c80c246ddab
+<<<<<<< HEAD:KindRegardsUnity/Assets/Resources/Sprites/MemoryGame.meta
+guid: b587f9b1157c14f4ebceef9c44af7cca
+=======
+guid: 0d3722211be449b44bddd7d7a8901ebf
+>>>>>>> origin/development:KindRegardsUnity/Assets/Sounds/Animal Sounds.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

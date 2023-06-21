@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: d9bc5ceeabd772c47bccba4799133cb5
+<<<<<<< HEAD:KindRegardsUnity/Assets/Resources/Sprites/MemoryGame/MemoryGame.meta
+guid: 8176f9bb695d2274e968654e5fe1a5e3
+=======
+guid: e36ff3b0b25dae348a71b7ffed8ee203
+>>>>>>> origin/development:KindRegardsUnity/Assets/Sounds/Mail Game sounds.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -65,6 +65,8 @@ public class MessageHandling : MonoBehaviour
     private Button sendMessageButton;
     [SerializeField]
     private GameObject cantSendMessageText;
+    [SerializeField]
+    private GameObject sendMessageLabel;
 
     private Animator messageAnimator;
     private UserHandling userHandling;
@@ -633,6 +635,9 @@ public class MessageHandling : MonoBehaviour
         //Send a message to 33% percent of the active players
         //Prioritize players with less messages received than others
 
+        TextMeshProUGUI sendMessageLabelText = sendMessageLabel.GetComponent<TextMeshProUGUI>();
+        string sendMessageText = sendMessageLabelText.text;
+
         string userNameOfSender = "";
         List<(string, string)> allUserIds = new List<(string, string)>();
         List<UserWithMessageInfo> activeUsers = new List<UserWithMessageInfo>();
@@ -756,7 +761,7 @@ public class MessageHandling : MonoBehaviour
                 {"messagesReceivedPerDay", userToSendMessageTo.MessagesReceivedPerDay}
             };
 
-            await firestore.Collection("users").Document(userId).SetAsync(updates, SetOptions.MergeAll).ContinueWith((task) => 
+            await firestore.Collection("users").Document(userId).SetAsync(updates, SetOptions.MergeAll).ContinueWith((task) =>
             {
                 Debug.Log($"Updated user message data!");
             });
@@ -767,7 +772,7 @@ public class MessageHandling : MonoBehaviour
             var message = new
             {
                 name = userNameOfSender,
-                text = "Let's see if it works",
+                text = sendMessageText,
                 timestamp = FieldValue.ServerTimestamp,
                 from = userId,
                 to = userIdsToSendMessagesTo
@@ -779,7 +784,7 @@ public class MessageHandling : MonoBehaviour
             };
 
             //Updating the time that the user sent the last message
-            await firestore.Collection("users").Document(userId).SetAsync(updateLastTimeMessageSent, SetOptions.MergeAll).ContinueWith((task) => 
+            await firestore.Collection("users").Document(userId).SetAsync(updateLastTimeMessageSent, SetOptions.MergeAll).ContinueWith((task) =>
             {
                 Debug.Log("Updated last time this user sent a message!");
             });
@@ -807,11 +812,6 @@ public class MessageHandling : MonoBehaviour
             return false;
         }
         
-    }
-
-    public async void SendMessageOnClick()
-    {
-        await SendMessage();
     }
 
     //This should be used in Start()
@@ -1038,13 +1038,12 @@ public class MessageHandling : MonoBehaviour
             //DateTime timestamp = DateTime.Parse(message.Timestamp);
             Debug.Log($"Message timestamp is: {message.Timestamp}");
         }
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        textMessagesCounter.text = $"You have {messages.Count} new messages";
-        textRepliesCounter.text = $"You have {repliesReceived.Count} new replies";
+        textMessagesCounter.text = $"{messages.Count}";
+        textRepliesCounter.text = $"{repliesReceived.Count}";
     }
 }

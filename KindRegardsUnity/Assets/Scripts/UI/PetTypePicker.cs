@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class PetTypePicker : MonoBehaviour
 {
     // Start is called before the first frame update
+    [SerializeField]
+    float rabbitVolume, owlVolume, catVolume, dogVolume, pitchMin, pitchMax;
 
     [SerializeField]
     private List<AudioClip> animalAudioClips;
@@ -16,6 +18,7 @@ public class PetTypePicker : MonoBehaviour
     [SerializeField]
     private Text typeText;
     private AudioSource audioSource;
+
     [SerializeField]
     private int currentSelectedType;
 
@@ -25,6 +28,7 @@ public class PetTypePicker : MonoBehaviour
     {
         currentSelectedType = 0;
         petInfo = GameObject.FindWithTag("PetInfo").GetComponent<PetInfo>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -58,7 +62,8 @@ public class PetTypePicker : MonoBehaviour
         {
             currentSelectedType = 0;
         }
-        return;
+        PlayTypeSound();
+        UpdateTypeText();
     }
 
     public void Previous()
@@ -68,24 +73,38 @@ public class PetTypePicker : MonoBehaviour
         {
             currentSelectedType = 3;
         }
-        return;
+        PlayTypeSound();
+        UpdateTypeText();
     }
 
-    // public void PlayTypeSound()
-    // {
-    //     switch (Enum.Parse(typeof(PetStateEnum), petInfo.petType))
-    //     {
-    //         case PetStateEnum.Rabbit:
-    //         break;
-    //         case PetStateEnum.Owl:
-    //         break;
-    //         case PetStateEnum.Cat:
-    //         break;
-    //         case PetStateEnum.Dog:
-    //         break;
-    //         default:
-    //         typeText.text = "-";
-    //         break;
-    //     }
-    // }
+    public void PlayTypeSound()
+    {
+        audioSource.pitch = Random.Range(pitchMin, pitchMax);
+        switch (currentSelectedType)
+        {
+            case (int)PetStateEnum.Rabbit:
+                audioSource.clip = animalAudioClips[0];
+                audioSource.volume = rabbitVolume;
+                audioSource.Play();
+                break;
+            case (int)PetStateEnum.Owl:
+                audioSource.clip = animalAudioClips[1];
+                audioSource.volume = owlVolume;
+                audioSource.Play();
+                break;
+            case (int)PetStateEnum.Cat:
+                audioSource.clip = animalAudioClips[2];
+                audioSource.volume = catVolume;
+                audioSource.Play();
+                break;
+            case (int)PetStateEnum.Dog:
+                audioSource.clip = animalAudioClips[3];
+                audioSource.volume = dogVolume;
+                audioSource.Play();
+                break;
+            default:
+                typeText.text = "-";
+                break;
+        }
+    }
 }

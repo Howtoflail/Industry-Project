@@ -15,6 +15,32 @@ public class BezierFollow : MonoBehaviour
     [SerializeField]
     private GameObject[] uiElements;
 
+    [SerializeField]
+    private GameObject mainCamera;
+
+    [SerializeField]
+    private GameObject uiCanvas;
+
+    [SerializeField]
+    private GameObject uiTransition;
+
+    [SerializeField]
+    private GameObject[] pets;
+
+    [SerializeField]
+    private float timeToWaitForInit = 2f;
+
+    private bool petFound = false;
+
+    private GameObject petEnabled;
+
+    private AudioSource petAudioSource;
+
+    [SerializeField]
+    private AudioClip petAudioClip;
+
+    private float timeWhenCameraAnimationFinished;
+
     private MessageHandling messageHandling;
 
     private int routeToGo;
@@ -42,8 +68,9 @@ public class BezierFollow : MonoBehaviour
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
+        timeWhenCameraAnimationFinished = 0f;
 
-        foreach(GameObject uiElement in uiElements) 
+        foreach (GameObject uiElement in uiElements) 
         {
             uiElement.SetActive(false);
         }
@@ -51,11 +78,31 @@ public class BezierFollow : MonoBehaviour
 
     void Update()
     {
+        //Get the enabled pet after the user is initialized
+        if(Time.time >= timeToWaitForInit && petFound == false) 
+        {
+            petFound = true;
+
+            //Get the enabled pet
+            foreach (GameObject pet in pets)
+            {
+                if (pet.activeSelf)
+                {
+                    petEnabled = pet;
+                }
+            }
+
+            Debug.Log($"Pet enabled is: {petEnabled.name}");
+            petAudioSource = petEnabled.GetComponent<AudioSource>();
+        }
+
         if(timeWhenSentAnimationFinished != 0f) 
         {
             timeWhenSentAnimationFinished = 0f;
-            //load the mail game
-            SceneManager.LoadScene(1);
+            //Load the mail game
+            SceneManager.LoadScene(1, LoadSceneMode.Additive);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged += CheckIfMainSceneIsActivated;
         }
 
         if(timeWhenArriveAnimationFinished != 0f)
@@ -67,6 +114,43 @@ public class BezierFollow : MonoBehaviour
                 uiElement.SetActive(true);
             }
         }
+    }
+
+    public void ResetUIWhenLeavingMail()
+    {
+        foreach (GameObject uiElement in uiElements)
+        {
+            uiElement.SetActive(false);
+        }
+    }
+
+    public void SetTimeWhenCameraAnimationFinished()
+    {
+        timeWhenCameraAnimationFinished = Time.time;
+        Debug.Log($"Time when camera animation finished: {timeWhenCameraAnimationFinished}");
+    }
+
+    void CheckIfMainSceneIsActivated(Scene current, Scene next)
+    {
+        Debug.Log($"Next scene is: {next.name}");
+        if(next.name == "KindRegards")
+        {
+            //Enable main camera
+            mainCamera.SetActive(true);
+            //Enable all UI
+            uiCanvas.SetActive(true);
+            uiTransition.SetActive(false);
+        }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded!");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
+        //Disable main camera to switch to the other scene's camera
+        mainCamera.SetActive(false);
+        //Disable all UI
+        uiCanvas.SetActive(false);
     }
 
     public void OnClickMove()
@@ -89,6 +173,10 @@ public class BezierFollow : MonoBehaviour
                 Debug.Log($"If check works");
                 timeWhenMessageSent = Time.time;
                 routeToGo = 3;
+
+                //Disable UI during animation
+                uiCanvas.SetActive(false);
+
                 StartCoroutine(GoByTheRoute(routeToGo));
             }
         });
@@ -97,9 +185,22 @@ public class BezierFollow : MonoBehaviour
 
     private IEnumerator GoByTheRoute(int routeNumber)
     {
+        while(timeWhenCameraAnimationFinished == 0f && routeNumber != 3) 
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        if(routeNumber != 3) 
+        {
+            petAudioSource.loop = true;
+            petAudioSource.Play();
+        }
+
         if(timeWhenMessageSent != 0f)
         {
             yield return new WaitForSeconds(timeToWaitForSendingMessageAnimation);
+            petAudioSource.loop = true;
+            petAudioSource.Play();
         }
 
         coroutineAllowed = false;
@@ -148,5 +249,8 @@ public class BezierFollow : MonoBehaviour
             timeWhenArriveAnimationFinished = Time.time;
             Debug.Log($"Time when animation finished: {timeWhenArriveAnimationFinished}");
         }
+
+        petAudioSource.Stop();
+        timeWhenCameraAnimationFinished = 0f;
     }
 }
