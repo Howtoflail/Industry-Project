@@ -8,7 +8,15 @@ public class UIState : MonoBehaviour
     
     public void DetectActive(UIStateEnum currentState)
     {
-        if (uiStates.Contains(currentState)) gameObject.SetActive(true);
-        else gameObject.SetActive(false);
+        if (uiStates.Contains(currentState))
+        {
+            gameObject.SetActive(true);
+            //Debug.Log($"Active state now is: {currentState}");
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+            
     }
 }

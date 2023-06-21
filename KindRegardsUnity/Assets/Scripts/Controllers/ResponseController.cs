@@ -8,61 +8,115 @@ public class ResponseController : MonoBehaviour
     public TextMeshProUGUI output;
     [SerializeField] public GameObject panelResponse;
     [SerializeField] public GameObject mail;
-    [SerializeField] private bool open;
+    [SerializeField] private bool messageOpen;
+    [SerializeField] private GameObject panelReply;
+    [SerializeField] private GameObject panelSendMessage;
+    [SerializeField] private TextMeshProUGUI messageOutput;
+    private bool replyOpen;
+    private bool sendMessage;
 
     void Start()
     {
-        open = false;
-    }
-
-    void Update()
-    {
-        if(mail.active == true)
-        {
-            if(Input.GetKey("mouse 0"))
-            {
-                OpenMessage();
-            }
-        }
+        messageOpen = false;
+        replyOpen = false;
+        sendMessage = false;
     }
     
-    public void HandleInputData(int response)
+    public void HandleInputDataReply(int response)
     {
         switch(response)
         {
             case 0:
-            output.text = "Je kunt het!";
-            break;
-
+                output.text = "Je kunt het!";
+                break;
             case 1:
-            output.text = "Alles komt goed!";
-            break;
-
+                output.text = "Alles komt goed!";
+                break;
             case 2:
-            output.text = "Je bent niet alleen!";
-            break;
+                output.text = "Je bent niet alleen!";
+                break;
+        }
+    }
+
+    public void HandleInputDataMessage(int response)
+    {
+        switch(response) 
+        {
+            case 0:
+                messageOutput.text = "Mijn dag is behoorlijk slecht geweest.";
+                break;
+            case 1:
+                messageOutput.text = "Vandaag was een vreemde dag.";
+                break;
+            case 2:
+                messageOutput.text = "Ik had een goede dag vandaag.";
+                break;
+        }
+    }
+
+    public void OpenSendMessage()
+    {
+        if (sendMessage == false)
+        {
+            panelSendMessage.SetActive(true);
+            sendMessage = true;
         }
     }
 
     public void OpenMessage()
     {
-        if(open == false)
-            {
-                panelResponse.active = true; 
-                open = true;
-            }
+        if (messageOpen == false)
+        {
+            panelResponse.SetActive(true);
+            messageOpen = true;
+        }
     }
 
-    public IEnumerator CloseScreen()
+    public void OpenReply()
     {
-        panelResponse.active = false;
+        if (replyOpen == false)
+        {
+            panelReply.SetActive(true);
+            replyOpen = true;
+        }
+    }
+
+    private IEnumerator CloseSendMessageScreen()
+    {
+        panelSendMessage.SetActive(false);
         float waitTime = 4;
         yield return new WaitForSeconds(waitTime);
-        open = false;
+        sendMessage = false;
+    }
+
+    private IEnumerator CloseMessageScreen()
+    {
+        panelResponse.SetActive(false);
+        float waitTime = 4;
+        yield return new WaitForSeconds(waitTime);
+        messageOpen = false;
+    }
+
+    private IEnumerator CloseReplyScreen()
+    {
+        panelReply.SetActive(false);
+        float waitTime = 4;
+        yield return new WaitForSeconds(waitTime);
+        replyOpen = false;
+    }
+
+    public void CloseSendMessage()
+    {
+        StartCoroutine(CloseSendMessageScreen());
     }
 
     public void CloseMessage()
     {
-        StartCoroutine(CloseScreen());
+        StartCoroutine(CloseMessageScreen());
+    }
+
+    public void CloseReply()
+    {
+        StartCoroutine(CloseReplyScreen());
     }
 }

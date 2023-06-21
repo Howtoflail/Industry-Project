@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KindRegardsApi.Logic.Abstractions\KindRegardsApi.Logic.Abstractions.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Domain\KindRegardsApi.Domain.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Data.Abstractions\KindRegardsApi.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\KindRegardsApi.Entity\KindRegardsApi.Entity.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

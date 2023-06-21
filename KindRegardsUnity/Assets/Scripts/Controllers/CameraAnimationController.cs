@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.Events;
 
 public class CameraAnimationController : MonoBehaviour
 {
     private CameraDTO cameraDTO;
     CameraController cameraController;
     [SerializeField] Canvas canvas;
+	[SerializeField] private BookDirector bookDirector;
+
+    public UnityEvent onMailAnimationFinished;
 
     private void Start()
     {
@@ -36,7 +40,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("SettingsIn", false);
-                        yield return new WaitForSeconds(2);
                         break;
                     case 4:
                         //Starts the animation
@@ -48,19 +51,19 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("MessageIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 8:
-                        //Starts the animation
-                        cameraDTO.cameraMove.SetBool("StickersIn", true);
                         //Make the sidebar invisible so the button back can't be pressed
                         Hide();
+						bookDirector.Close();
+						yield return new WaitForSeconds(3);
+                        //Starts the animation
+                        cameraDTO.cameraMove.SetBool("StickersIn", true);
                         //waits for the animation to finish
                         yield return new WaitForSeconds(3);
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("StickersIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 9:
                         //Starts the animation
@@ -72,7 +75,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("DiaryIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                     case 12:
                         //Starts the animation
@@ -84,7 +86,6 @@ public class CameraAnimationController : MonoBehaviour
                         //Make the sidebar visible again
                         Show();
                         cameraDTO.cameraMove.SetBool("MinigamesIn", false);
-                        yield return new WaitForSeconds(4);
                         break;
                 }
             }
@@ -117,6 +118,7 @@ public class CameraAnimationController : MonoBehaviour
                     cameraDTO.cameraMove.SetBool("MessageOut", false);
                     //waits for the animation to finish
                     yield return new WaitForSeconds(2);
+                    onMailAnimationFinished.Invoke();
                     //Make the sidebar visible again
                     Show();
                     break;
@@ -131,6 +133,8 @@ public class CameraAnimationController : MonoBehaviour
                     cameraDTO.cameraMove.SetBool("StickersOut", false);
                     //waits for the animation to finish
                     yield return new WaitForSeconds(2);
+					bookDirector.Open();
+					yield return new WaitForSeconds(5);
                     //Make the sidebar visible again
                     Show();
                     break;
@@ -182,7 +186,6 @@ public class CameraAnimationController : MonoBehaviour
                     //Make the sidebar visible again
                     Show();
                     cameraDTO.cameraMove.SetBool("PaperPlaneIn", false);
-                    yield return new WaitForSeconds(4);
                     break;
             }
             cameraDTO.state = newState;
