@@ -5,11 +5,15 @@ using UnityEngine;
 public class PetColorPicker : MonoBehaviour
 {
     // Start is called before the first frame update
+    AudioSource audioSource;
+    [SerializeField]
+    AudioClip changeColorClip;
     [SerializeField]
     private PetController petController;
     private Color currentPetColor;
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         currentPetColor = Color.white;
     }
 
@@ -18,6 +22,8 @@ public class PetColorPicker : MonoBehaviour
     {
         currentPetColor = color;
         petController.SetColorCurrentPet(color);
+        audioSource.clip = changeColorClip;
+        audioSource.Play();
     }
 
     public Color GetPetColor()
