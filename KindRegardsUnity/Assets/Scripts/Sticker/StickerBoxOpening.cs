@@ -20,9 +20,11 @@ public class StickerBoxOpening : MonoBehaviour
     private AudioClip openAudio;
 
     private bool isOpen;
+    private bool stickerShown;
 
     void Start()
     {
+        stickerShown = false;
         isOpen = false;
         tapCount = 0;
         animator = gameObject.GetComponent<Animator>();
@@ -47,13 +49,22 @@ public class StickerBoxOpening : MonoBehaviour
         }
         else
         {
-            SceneManager.UnloadSceneAsync(2);
+            if (stickerShown)
+            {
+                SceneManager.UnloadSceneAsync(2);
+            }
         }
     }
 
     void OnDisable()
     {
         Debug.Log("Scene disabled with OnDisable");
+    }
+
+    public void StickerShown()
+    {
+        stickerShown = true;
+        // Debug.Log("Sticker shown");
     }
 
     private void Open()

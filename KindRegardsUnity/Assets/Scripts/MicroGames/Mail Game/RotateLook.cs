@@ -9,7 +9,7 @@ public class RotateLook : MonoBehaviour
     private float my_gravity;
 
     [SerializeField]
-    Rigidbody player;
+    GameObject player;
     public Vector3 velocity;
     float _angle;
 
@@ -27,24 +27,24 @@ public class RotateLook : MonoBehaviour
         currentEulerAngles = transform.rotation.eulerAngles;
     }
 
-    private void FallSpeed()
-    {
-        velocity.y += my_gravity * Time.deltaTime;
-        // I assume this is intended to apply both y AND x movement?
-        player.transform.position += velocity * Time.deltaTime;
+    // private void FallSpeed()
+    // {
+    //     velocity.y += my_gravity * Time.deltaTime;
+    //     // I assume this is intended to apply both y AND x movement?
+    //     player.transform.position += velocity * Time.deltaTime;
 
-        // Convert velocity to an angle. (If velocity.x is 0, use 1 instead)
-        float newAngle = Mathf.Atan2(velocity.y, velocity.x);
+    //     // Convert velocity to an angle. (If velocity.x is 0, use 1 instead)
+    //     float newAngle = Mathf.Atan2(velocity.y, velocity.x);
 
-        // Convert to degrees, and clamp between your desired range.
-        newAngle = Mathf.Clamp(newAngle * Mathf.Rad2Deg, minAngle, maxAngle);
+    //     // Convert to degrees, and clamp between your desired range.
+    //     newAngle = Mathf.Clamp(newAngle * Mathf.Rad2Deg, minAngle, maxAngle);
 
-        // Blend from your old angle toward the new angle, smoothly.
-        _angle = Mathf.Lerp(_angle, newAngle, Time.deltaTime);
+    //     // Blend from your old angle toward the new angle, smoothly.
+    //     _angle = Mathf.Lerp(_angle, newAngle, Time.deltaTime);
 
-        // Set your rotation to this angle.
-        player.transform.localEulerAngles = new Vector3(0, 0, _angle);
-    }
+    //     // Set your rotation to this angle.
+    //     player.transform.localEulerAngles = new Vector3(0, 0, _angle);
+    // }
 
     // private void FixedUpdate()
     // {  

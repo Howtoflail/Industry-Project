@@ -2967,7 +2967,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6673682805634700289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3004,6 +3004,7 @@ MonoBehaviour:
   viewPastEntryPanel: {fileID: 6673682806141745136}
   newEntryPanel: {fileID: 6673682804924376733}
   inDiaryButtons: {fileID: 6673682806166265343}
+  emotionWheelParentPanel: {fileID: 0}
   insertCodeInput: {fileID: 6673682806705840937}
   inDiaryDialog: {fileID: 6673682805175862071}
   errorDialog: {fileID: 6673682806070675538}
@@ -3011,17 +3012,25 @@ MonoBehaviour:
   contentEntryInput: {fileID: 6673682805359047403}
   textContentEntry: {fileID: 6673682805723752973}
   emotions: {fileID: 0}
-  sliderViewEntry: {fileID: 6673682805689348528}
-  sliderNewEntry: {fileID: 6673682805644354088}
+  newEntryEmotionText: {fileID: 0}
+  newEntryEmotionImage: {fileID: 0}
+  viewEntryEmotionText: {fileID: 0}
+  viewEntryOnDateText: {fileID: 0}
+  viewEntryEmotionImage: {fileID: 0}
   handleViewEntry: {fileID: 6673682805986470424}
   textEmotionViewEntry: {fileID: 6673682805840653996}
   textEmotion: {fileID: 6673682805922723074}
+  newEntrySelectedEmotion: 
+  search: 
+  search_text: {fileID: 0}
   entryButtonPrefab: {fileID: 1570467365852518574, guid: a4d7ed517adee61468a1389f6f6c4484,
     type: 3}
   entriesListParent: {fileID: 6673682806097626841}
   entryManager: {fileID: 6673682805634700300}
   fileManager: {fileID: 0}
   states: {fileID: 0}
+  clonesDates: []
+  entries: []
 --- !u!114 &6673682805634700301
 MonoBehaviour:
   m_ObjectHideFlags: 0
