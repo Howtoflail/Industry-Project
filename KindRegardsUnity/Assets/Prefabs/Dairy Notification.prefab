@@ -339,6 +339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diaryNotifcation: {fileID: 0}
   button: {fileID: 8844123447402523167}
+  diary: {fileID: 0}
 --- !u!95 &8952877048975982500
 Animator:
   serializedVersion: 4
