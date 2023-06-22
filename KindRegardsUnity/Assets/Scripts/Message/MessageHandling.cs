@@ -1,3 +1,5 @@
+using Firebase;
+using Firebase.Analytics;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using System;
@@ -1027,14 +1029,21 @@ public class MessageHandling : MonoBehaviour
         }
     }
 
+    async Task WaitForFirebase()
+    {
+        await FirebaseApp.CheckAndFixDependenciesAsync();
+        FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
+        firestore = FirebaseFirestore.DefaultInstance;
+    }
+
     // Start is called before the first frame update
     async void Start()
     {
         userHandling = gameObject.GetComponent<UserHandling>();
-        firestore = FirebaseFirestore.DefaultInstance;
         messageAnimator = messageObject.GetComponent<Animator>();
         //userId = userHandling.GetIdFromFile(filePath);
 
+        await WaitForFirebase();
         await WaitForTasksBeforeStart();
 
         Debug.Log($"Messages array size is: {messages.Count}");

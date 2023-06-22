@@ -37,7 +37,6 @@ public class UserHandling : MonoBehaviour
     [SerializeField]
     private GameObject textUserFoundObject;
 
-    private FirestoreManager firestoreManager;
     private FirebaseFirestore firestore;
 
     //When a user is first created, the user will have a field lastTimeLoggedIn
@@ -165,6 +164,8 @@ public class UserHandling : MonoBehaviour
 
     public async Task<bool> CheckIfUserExistsFromUserIdOrUniqueId(FirebaseFirestore firestoreParam)
     {
+        //TextMeshProUGUI textUserFound = textUserFoundObject.GetComponent<TextMeshProUGUI>();
+
         bool createUser = false;
         userId = GetIdFromFile(filePathUser);
         uiController = uiControllerGameObject.GetComponent<UIController>();
@@ -317,13 +318,11 @@ public class UserHandling : MonoBehaviour
                     {
                         Debug.Log($"User didn't have User.bin file but was found! User name: {name}");
 
-                        TextMeshProUGUI textUserFound = textUserFoundObject.GetComponent<TextMeshProUGUI>();
-
                         //Add the correct user id to the User.bin file
                         userId = newUserId;
                         SaveIdInBinary(userId);
                         userFound = true;
-                        textUserFound.text = "User found!";
+                        //textUserFound.text = "User found!";
                         break;
                     }
                 }
@@ -332,6 +331,7 @@ public class UserHandling : MonoBehaviour
             //If user was not found, redirect to character creation
             if (userFound == false) 
             {
+                //textUserFound.text = "User doesnt exist!";
                 createUser = true;
                 CreateUser();
             }

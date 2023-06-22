@@ -100,12 +100,12 @@ public class FirestoreManager : MonoBehaviour
 
 	void Start()
 	{
-		FirebaseApp.CheckAndFixDependenciesAsync()
+		/*FirebaseApp.CheckAndFixDependenciesAsync()
 		.ContinueWithOnMainThread(task => {
 			FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
 			store = FirebaseFirestore.DefaultInstance;
 			ready = true;
 			onLoaded.Invoke();
-		});
+		});*/
 	}
 }
