@@ -9,7 +9,7 @@ public class TransitionBehaviour : MonoBehaviour
 
 	void Start()
 	{
-		animator = GetComponent<Animator>();
+		animator = gameObject.GetComponent<Animator>();
 	}
 
 	public void Open()

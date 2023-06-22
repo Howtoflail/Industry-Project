@@ -145,7 +145,7 @@ public class BezierFollow : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Scene loaded!");
+        Debug.Log($"Scene loaded!: {scene.name}");
         SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
         //Disable main camera to switch to the other scene's camera
         mainCamera.SetActive(false);
