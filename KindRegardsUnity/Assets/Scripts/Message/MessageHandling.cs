@@ -539,18 +539,28 @@ public class MessageHandling : MonoBehaviour
                         }
                     }
 
-                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && lastTimeMessageSent != "" && messagesReceivedPerDay != "")
+                    if (name != "" && lastTimeLoggedIn != "" && lastTimeMessageReceived != "" && messagesReceivedPerDay != "")
                     {
                         lastTimeLoggedIn = lastTimeLoggedIn.Substring(11, 10) + " " + lastTimeLoggedIn.Substring(22, 8);
                         lastTimeMessageReceived = lastTimeMessageReceived.Substring(11, 10) + " " + lastTimeMessageReceived.Substring(22, 8);
-                        lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
+                        if(lastTimeMessageSent != "")
+                        {
+                            lastTimeMessageSent = lastTimeMessageSent.Substring(11, 10) + " " + lastTimeMessageSent.Substring(22, 8);
+                        }
+                        else
+                        {
+                            lastTimeMessageSent = DateTime.MinValue.ToString();
+                        }
 
                         UserWithMessageInfo userWithMessageInfo = new UserWithMessageInfo(name, isActive, DateTime.Parse(lastTimeLoggedIn), DateTime.Parse(lastTimeMessageReceived), DateTime.Parse(lastTimeMessageSent), int.Parse(messagesReceivedPerDay));
 
                         //Add 2 hours because DateTime in db is UTC+2
                         userWithMessageInfo.LastTimeLoggedIn = userWithMessageInfo.LastTimeLoggedIn.AddHours(2);
                         userWithMessageInfo.LastTimeMessageReceived = userWithMessageInfo.LastTimeMessageReceived.AddHours(2);
-                        userWithMessageInfo.LastTimeMessageSent = userWithMessageInfo.LastTimeMessageSent.AddHours(2);
+                        if(lastTimeMessageSent != "")
+                        {
+                            userWithMessageInfo.LastTimeMessageSent = userWithMessageInfo.LastTimeMessageSent.AddHours(2);
+                        }
 
                         //If the last message was received a day or more ago, reset the messagesReceivedPerDay to 0
                         DateTime currentDateTime = DateTime.Now;
@@ -675,6 +685,7 @@ public class MessageHandling : MonoBehaviour
         //Getting the value of the user with the least messages received
         foreach (var userWithMessageInfo in activeUsers)
         {
+            Debug.Log($"Active user: {userWithMessageInfo.Name}");
             if (userWithMessageInfo.MessagesReceivedPerDay < leastMessagesReceived)
             {
                 leastMessagesReceived = userWithMessageInfo.MessagesReceivedPerDay;
