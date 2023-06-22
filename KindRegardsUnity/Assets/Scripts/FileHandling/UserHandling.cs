@@ -34,6 +34,8 @@ public class UserHandling : MonoBehaviour
     private GameObject petColorPickerObject;
     [SerializeField]
     private GameObject petControllerObject;
+    [SerializeField]
+    private GameObject textUserFoundObject;
 
     private FirestoreManager firestoreManager;
     private FirebaseFirestore firestore;
@@ -315,10 +317,13 @@ public class UserHandling : MonoBehaviour
                     {
                         Debug.Log($"User didn't have User.bin file but was found! User name: {name}");
 
+                        TextMeshProUGUI textUserFound = textUserFoundObject.GetComponent<TextMeshProUGUI>();
+
                         //Add the correct user id to the User.bin file
                         userId = newUserId;
                         SaveIdInBinary(userId);
                         userFound = true;
+                        textUserFound.text = "User found!";
                         break;
                     }
                 }
