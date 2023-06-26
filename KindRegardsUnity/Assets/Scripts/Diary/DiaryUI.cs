@@ -171,12 +171,12 @@ public class DiaryUI : MonoBehaviour
 
     public void CloseEmotionSelection()
     {
-        emotionWheelParentPanel.active = false;
+        emotionWheelParentPanel.SetActive(false);
     }
 
     public void OpenEmotionSelection()
     {
-        emotionWheelParentPanel.active = true;
+        emotionWheelParentPanel.SetActive(true);
     }
 
     /// <summary>
@@ -478,6 +478,7 @@ public class DiaryUI : MonoBehaviour
                 if (diaryLock.CodeCorrect(insertCodeInput.text))
                 {
                     OnSuccessfulAccess();
+                    Debug.Log("Test");
                 }
                 else
                 {

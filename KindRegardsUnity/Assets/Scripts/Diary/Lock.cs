@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lock : MonoBehaviour { 
-
+public class Lock : MonoBehaviour
+{
     private bool isCodeSet;
     private string code;
 
@@ -31,9 +31,13 @@ public class Lock : MonoBehaviour {
     public bool CodeCorrect(string enteredCode)
     {
         if (code == enteredCode)
+        {
             return true;
+        }
         else
+        {
             return false;
+        }
     }
 
     public void SetCode(string value)

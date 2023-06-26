@@ -32,7 +32,7 @@ public class UIController : MonoBehaviour
         // menuOptions.SetActive(false);
     }
 
-    private void Navigate(UIStateEnum uiState)
+    public void Navigate(UIStateEnum uiState)
     {
         foreach (UIState state in states)
             state.DetectActive(uiState);
@@ -56,8 +56,7 @@ public class UIController : MonoBehaviour
 
     public void Forward(int uiState)
     {
-        if (!collapsed)
-            MenuClick();
+        if (!collapsed) MenuClick();
         AddUIState((UIStateEnum)uiState);
         Navigate(GetCurrentUIState());
     }
