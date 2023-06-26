@@ -29,12 +29,14 @@ public class Parallax : MonoBehaviour
     {
         if (active)
         {
+            // transform.position = new Vector3(100, 0, )
             // Move the GameObject along the X-axis based on the scroll speed
             transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
 
             // If the GameObject has moved past the reset position, reset its position to the initial position
-            if (transform.position.x <= resetPosition)
+            if (transform.localPosition.x <= resetPosition)
             {
+                Debug.Log(transform.position);
                 transform.position = startPosition;
             }
         }
